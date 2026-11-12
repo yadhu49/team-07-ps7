@@ -7,6 +7,7 @@ const LINKS = [
   { href: "/", label: "Dispatch chat" },
   { href: "/board", label: "Deliveries" },
   { href: "/riders", label: "Riders" },
+  { href: "/rider", label: "Rider view" },
 ];
 
 export default function AppHeader() {

@@ -15,7 +15,8 @@ Logged-in user: **dispatcher D01, Anitha V** (Chennai hub).
 - Picks riders who are active, on shift that day, in the same zone, with free capacity.
 - Assigns deliveries through the database function `assign_delivery()`, which checks every business rule.
 - Reschedules failed deliveries through `reschedule_delivery()`, with a hard limit of 3 attempts per delivery.
-- Three screens: dispatch chat, deliveries board (Pending, Assigned, Out for delivery, Delivered, Failed) and riders with their live load.
+- Four screens: dispatch chat, deliveries board (Pending, Assigned, Out for delivery, Delivered, Failed), riders with their live load, and a rider view where a rider marks a stop delivered or failed.
+- Daily cash-on-delivery totals per rider, for the hub supervisor.
 
 ## Live demo
 
@@ -61,6 +62,7 @@ Database functions `assign_delivery(delivery_id, rider_id)` and `reschedule_deli
 - `/` dispatch chat + live rider load
 - `/board` deliveries board with the five statuses
 - `/riders` riders, shifts and load
+- `/rider` rider view: pick a rider, mark today's stops delivered or failed, see COD collected and COD still to collect
 
 ## Tech stack
 
@@ -80,6 +82,7 @@ Next.js (App Router), React, TypeScript, Tailwind CSS, Supabase PostgreSQL, Goog
 1. `Assign all pending Velachery deliveries for this evening.` — the agent reads pending deliveries and rider capacity, assigns ORD-5006, and then explains why ORD-5007 cannot move (R01 is at 6 of 6, R02 is off today).
 2. `Which riders still have free capacity today?` — read-only view of the fleet.
 3. `Reschedule yesterday's failed deliveries to tomorrow morning.` — two failed deliveries move to tomorrow; the one with 3 attempts is refused by the database function.
+4. Open **Rider view**, pick R01, mark a stop delivered: the deliveries board and the COD total update. A failed mark counts an attempt and is refused after 3.
 
 ## Run it locally
 

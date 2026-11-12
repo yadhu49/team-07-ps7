@@ -46,3 +46,24 @@ export type BoardResponse = {
   deliveries: BoardDelivery[];
   riders: BoardRider[];
 };
+
+export type RiderSummary = {
+  id: string;
+  name: string;
+  zone_id: string;
+  zone_name: string;
+  vehicle: string;
+  shift: { start: string; end: string } | null;
+  /** Deliveries this rider can still mark today. */
+  active: BoardDelivery[];
+  /** Cash collected on today's delivered COD parcels. */
+  cod_collected: number;
+  delivered_count: number;
+  /** Cash still to collect on the active parcels. */
+  cod_pending: number;
+};
+
+export type RiderViewResponse = {
+  today: string;
+  riders: RiderSummary[];
+};
