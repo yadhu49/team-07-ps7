@@ -18,12 +18,25 @@ Logged-in user: **dispatcher D01, Anitha V** (Chennai hub).
 - Four screens: dispatch chat, deliveries board (Pending, Assigned, Out for delivery, Delivered, Failed), riders with their live load, and a rider view where a rider marks a stop delivered or failed.
 - Daily cash-on-delivery totals per rider, for the hub supervisor, exportable as CSV.
 - Deliveries board with search, zone and time-window filters and live status counts.
+- Supervisor dashboard: today's delivered / open / failed, success rate, COD collected and to collect, fleet load, a seven-day delivered-vs-failed chart, per-zone progress, rider performance and failure reasons.
+- Batch assign: one request assigns every pending delivery in a zone and window, spreading them over the riders with the most free capacity.
 
 ## Live demo
 
 - Vercel link: https://routewise-ps7.vercel.app
 - Passcode: `routewise2026`
 - Try this prompt: `Assign all pending Velachery deliveries for this evening.`
+
+## Screenshots
+
+| | |
+| --- | --- |
+| ![Dispatch chat](docs/screenshots/01-dispatch.png) | ![Deliveries board](docs/screenshots/02-board.png) |
+| Dispatch chat with live rider load | Deliveries board with the five statuses |
+| ![Supervisor dashboard](docs/screenshots/03-dashboard.png) | ![Rider view](docs/screenshots/05-rider-view.png) |
+| Supervisor dashboard and batch assign | Rider view with COD totals |
+
+More in [`docs/screenshots`](docs/screenshots), captured at 1440 px.
 
 ## Agent tools
 
@@ -34,6 +47,7 @@ Logged-in user: **dispatcher D01, Anitha V** (Chennai hub).
 | `getRiderLoad` | Every rider's active load, capacity, shift and deliveries completed today | Reads |
 | `getFailedDeliveries` | Failed deliveries with attempts used and whether a retry is allowed | Reads |
 | `assignDelivery` | Assigns one pending delivery to one rider via `assign_delivery()` | Writes |
+| `batchAssignDeliveries` | Assigns every pending delivery matching a zone and window, in one call (`dry_run` supported) | Writes |
 | `rescheduleDelivery` | Moves a failed delivery to a new date and window via `reschedule_delivery()` | Writes |
 
 Every tool argument is checked with **Zod** before the tool runs. Gemini never touches the database directly.
@@ -62,6 +76,7 @@ Database functions `assign_delivery(delivery_id, rider_id)` and `reschedule_deli
 
 - `/` dispatch chat + live rider load
 - `/board` deliveries board with the five statuses
+- `/dashboard` supervisor dashboard and batch assign
 - `/riders` riders, shifts and load
 - `/rider` rider view: pick a rider, mark today's stops delivered or failed (with a failure reason), see COD collected and COD still to collect, export the day's COD report
 - `/login` passcode gate
@@ -95,6 +110,18 @@ Next.js (App Router), React, TypeScript, Tailwind CSS, Supabase PostgreSQL, Goog
 ## Before you submit
 
 Replace the `<name 1>`–`<name 4>` placeholders in the Team table with the real names and roles.
+
+## API routes
+
+| Route | What it does |
+| --- | --- |
+| `POST /api/agent` | Runs the dispatcher agent with the seven tools |
+| `GET /api/board` | Deliveries and riders for the board |
+| `GET /api/rider` | Per-rider open stops and COD totals |
+| `POST /api/rider` | A rider marks a stop delivered or failed |
+| `GET /api/dashboard` | Hub KPIs, zone and rider stats, 7-day trend, failure reasons |
+| `POST /api/batch-assign` | Assigns every pending delivery matching `zone`, `time_window`, `delivery_date`; `dry_run: true` previews the plan |
+| `GET /api/health` | Which settings are missing, and whether the tables exist |
 
 ## Run it locally
 

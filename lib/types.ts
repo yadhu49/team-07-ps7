@@ -67,3 +67,73 @@ export type RiderViewResponse = {
   today: string;
   riders: RiderSummary[];
 };
+
+/* ------------------------------- supervisor ------------------------------- */
+
+export type DashboardTotals = {
+  date: string;
+  /** Deliveries scheduled for today. */
+  deliveries: number;
+  delivered: number;
+  failed: number;
+  open: number;
+  pending: number;
+  /** Cash from today's delivered COD parcels. */
+  codCollected: number;
+  /** Cash still to collect on today's open COD parcels. */
+  codPending: number;
+  /** Delivered / (delivered + failed), in percent. */
+  successRate: number;
+  activeRiders: number;
+  capacityInUse: number;
+  capacityTotal: number;
+};
+
+export type DashboardZone = {
+  zone_id: string;
+  zone_name: string;
+  total: number;
+  delivered: number;
+  failed: number;
+  open: number;
+  cod_open: number;
+};
+
+export type DashboardRider = {
+  id: string;
+  name: string;
+  zone_name: string;
+  delivered: number;
+  failed: number;
+  active: number;
+  capacity: number;
+  cod_collected: number;
+};
+
+export type DashboardTrendPoint = {
+  date: string;
+  delivered: number;
+  failed: number;
+  total: number;
+};
+
+export type DashboardReason = { reason: string; count: number };
+
+export type DashboardResponse = {
+  today: string;
+  totals: DashboardTotals;
+  zones: DashboardZone[];
+  riders: DashboardRider[];
+  trend: DashboardTrendPoint[];
+  reasons: DashboardReason[];
+};
+
+export type BatchAssignResult = {
+  date: string;
+  zone: string;
+  time_window: string | null;
+  dry_run: boolean;
+  assigned: { order_ref: string; rider_id: string; rider_name: string }[];
+  unassigned: { order_ref: string; reason: string }[];
+  summary: string;
+};

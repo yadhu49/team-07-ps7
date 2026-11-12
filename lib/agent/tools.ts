@@ -4,12 +4,13 @@ import { defineTool, type AgentTool } from "./defineTool";
 import { getSupabase } from "../supabase";
 import { isoDate } from "../schemas";
 import { todayInIndia } from "../dates";
+import { batchAssign } from "../batchAssign";
 
 /*
  * ROUTEWISE TOOLS (PS7 Delivery Dispatch)
  *
  * Read tools:  getPendingDeliveries, getAvailableRiders, getRiderLoad, getFailedDeliveries
- * Write tools: assignDelivery, rescheduleDelivery
+ * Write tools: assignDelivery, rescheduleDelivery, batchAssignDeliveries
  *
  * The two write tools call the database functions assign_delivery() and
  * reschedule_delivery() from seed/ps7_delivery_dispatch.sql. Those functions check
@@ -416,6 +417,28 @@ const rescheduleDelivery = defineTool({
   },
 });
 
+const batchAssignDeliveries = defineTool({
+  name: "batchAssignDeliveries",
+  description:
+    "Use this when the dispatcher asks to assign several pending deliveries at once, for example 'assign all pending Velachery deliveries for this evening'. It takes every pending delivery for the date that matches the zone and time window, and gives each one to the rider in that zone with the most free capacity, through the database function assign_delivery(). Use dry_run when the dispatcher only wants to see the plan, and report the assigned, the unassigned and the reasons.",
+  writes: true,
+  schema: z.object({
+    zone: z
+      .string()
+      .trim()
+      .optional()
+      .describe("Zone name like Velachery or zone id like Z1. Leave empty for all zones."),
+    delivery_date: isoDate.optional().describe("Date in YYYY-MM-DD format. Default is today."),
+    time_window: timeWindowSchema.optional().describe("Only deliveries in this window."),
+    dry_run: z
+      .boolean()
+      .optional()
+      .describe("true to only preview the assignments without writing anything"),
+  }),
+  run: async ({ zone, delivery_date, time_window, dry_run }) =>
+    batchAssign({ zone, delivery_date, time_window, dry_run }),
+});
+
 /** Every tool in this list is given to Gemini. */
 export const tools: AgentTool[] = [
   getPendingDeliveries,
@@ -423,5 +446,6 @@ export const tools: AgentTool[] = [
   getRiderLoad,
   getFailedDeliveries,
   assignDelivery,
+  batchAssignDeliveries,
   rescheduleDelivery,
 ];

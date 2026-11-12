@@ -30,17 +30,22 @@ Never update `deliveries`, `riders` or `rider_shifts` directly from TypeScript. 
 app/page.tsx                 Dispatch chat screen
 app/board/page.tsx           Deliveries board (5 statuses)
 app/riders/page.tsx          Riders with load
+app/dashboard/page.tsx       Supervisor dashboard: KPIs, zones, riders, trend, batch assign
 app/rider/page.tsx           Rider view: mark delivered/failed, COD totals, CSV export
 app/api/agent/route.ts       POST /api/agent - runs the agent
 app/api/board/route.ts       GET /api/board - deliveries + riders for the screens
 app/api/rider/route.ts       GET rider summaries + COD; POST mark delivered/failed
+app/api/dashboard/route.ts   GET hub KPIs, zone and rider stats, 7-day trend, failure reasons
+app/api/batch-assign/route.ts POST batch assign of pending deliveries (dry_run supported)
+lib/batchAssign.ts           Batch assign service, shared by the endpoint and the agent tool
 app/globals.css              Design system: cards, buttons, inputs, chips, background
 app/api/health/route.ts      Which settings are missing, and is the deliveries table there
 components/AgentChat.tsx     Chat + tool call cards
+components/SupervisorDashboard.tsx  Dashboard + batch assign panel
 components/DeliveriesBoard.tsx
 components/RidersPanel.tsx
 components/AppHeader.tsx
-lib/agent/tools.ts           THE SIX TOOLS (main work)
+lib/agent/tools.ts           THE SEVEN TOOLS (main work)
 lib/agent/systemPrompt.ts    Gemini's instructions
 lib/agent/runAgent.ts        Agent loop, max 8 rounds
 lib/agent/defineTool.ts      Zod -> Gemini function declarations
