@@ -15,7 +15,7 @@ export default function DispatchPage() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   return (
-    <main className="mx-auto max-w-7xl p-4 md:p-6">
+    <main className="relative z-10 mx-auto max-w-7xl p-4 md:p-6">
       <AppHeader />
       <div className="grid gap-4 lg:grid-cols-5">
         <section className="lg:col-span-3">

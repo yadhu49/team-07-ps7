@@ -5,7 +5,7 @@ export const metadata = { title: "Riders · RouteWise" };
 
 export default function RidersPage() {
   return (
-    <main className="mx-auto max-w-4xl p-4 md:p-6">
+    <main className="relative z-10 mx-auto max-w-4xl p-4 md:p-6">
       <AppHeader />
       <RidersPanel />
     </main>

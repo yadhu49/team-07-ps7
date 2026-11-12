@@ -1,9 +1,227 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: var(--font-sans-app), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-mono-app), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
 :root {
   color-scheme: dark;
+  --line: rgba(255, 255, 255, 0.07);
+  --line-strong: rgba(255, 255, 255, 0.12);
+  --ink: #05080f;
+  --card-top: rgba(23, 33, 51, 0.72);
+  --card-bottom: rgba(9, 14, 24, 0.78);
+  --emerald: #34d399;
+}
+
+html,
+body {
+  min-height: 100%;
 }
 
 body {
-  @apply bg-slate-950 text-slate-100 antialiased;
+  background-color: var(--ink);
+  color: #e2e8f0;
+  -webkit-font-smoothing: antialiased;
+  background-image:
+    radial-gradient(900px 520px at 8% -10%, rgba(16, 185, 129, 0.18), transparent 62%),
+    radial-gradient(820px 480px at 96% -4%, rgba(56, 189, 248, 0.13), transparent 60%),
+    radial-gradient(760px 520px at 60% 112%, rgba(251, 191, 36, 0.07), transparent 68%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+/* Faint blueprint grid, faded out toward the bottom. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(148, 163, 184, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.055) 1px, transparent 1px);
+  background-size: 52px 52px;
+  -webkit-mask-image: radial-gradient(120% 80% at 50% 0%, #000 20%, transparent 78%);
+  mask-image: radial-gradient(120% 80% at 50% 0%, #000 20%, transparent 78%);
+}
+
+::selection {
+  background: rgba(52, 211, 153, 0.28);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.28) transparent;
+}
+*::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.24);
+  border-radius: 999px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Component classes live in the components layer so Tailwind utilities can override them. */
+@layer components {
+.card {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: linear-gradient(180deg, var(--card-top), var(--card-bottom));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.045),
+    0 26px 50px -34px rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(12px);
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.eyebrow {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(110, 231, 183, 0.85);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 3px 9px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #cbd5e1;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: 500;
+  color: #cbd5e1;
+  white-space: nowrap;
+}
+
+.input,
+.select {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--line-strong);
+  background: rgba(2, 6, 14, 0.7);
+  padding: 8px 11px;
+  font-size: 13px;
+  color: #e8eef7;
+  outline: none;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+.input::placeholder {
+  color: #64748b;
+}
+.input:focus,
+.select:focus {
+  border-color: rgba(52, 211, 153, 0.65);
+  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.14);
+}
+.select {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, #94a3b8 50%),
+    linear-gradient(135deg, #94a3b8 50%, transparent 50%);
+  background-position: calc(100% - 16px) 52%, calc(100% - 11px) 52%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 30px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: transform 120ms ease, background 140ms ease, border-color 140ms ease, opacity 140ms ease;
+  cursor: pointer;
+}
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  color: #04130d;
+  background: linear-gradient(180deg, #4ade80, #22c55e);
+  box-shadow: 0 10px 24px -14px rgba(34, 197, 94, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(180deg, #6ee7a5, #2fd96a);
+}
+
+.btn-ghost {
+  color: #cbd5e1;
+  border-color: var(--line-strong);
+  background: rgba(255, 255, 255, 0.03);
+}
+.btn-ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.07);
+  color: #f1f5f9;
+}
+
+.btn-danger {
+  color: #fda4af;
+  border-color: rgba(159, 18, 57, 0.65);
+  background: rgba(159, 18, 57, 0.16);
+}
+.btn-danger:hover:not(:disabled) {
+  background: rgba(159, 18, 57, 0.28);
+  color: #fecdd3;
+}
+
+.skeleton {
+  border-radius: 8px;
+  background: linear-gradient(90deg, rgba(148, 163, 184, 0.08), rgba(148, 163, 184, 0.16), rgba(148, 163, 184, 0.08));
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }

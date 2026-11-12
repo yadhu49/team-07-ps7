@@ -4,8 +4,16 @@ import { useEffect, useMemo, useState } from "react";
 import type { BoardDelivery, RiderSummary, RiderViewResponse } from "@/lib/types";
 
 function rupees(amount: number): string {
-  return `₹${amount.toLocaleString("en-IN")}`;
+  return `₹${Number(amount).toLocaleString("en-IN")}`;
 }
+
+const FAIL_REASONS = [
+  { value: "customer_not_home", label: "Customer not home" },
+  { value: "wrong_address", label: "Wrong address" },
+  { value: "refused", label: "Customer refused" },
+] as const;
+
+type FailReason = (typeof FAIL_REASONS)[number]["value"];
 
 export default function RiderView() {
   const [data, setData] = useState<RiderViewResponse | null>(null);
@@ -13,6 +21,7 @@ export default function RiderView() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [busyId, setBusyId] = useState<number | null>(null);
+  const [failReason, setFailReason] = useState<FailReason>("customer_not_home");
 
   async function load() {
     try {
@@ -51,14 +60,14 @@ export default function RiderView() {
           delivery_id: delivery.id,
           rider_id: rider.id,
           outcome,
-          reason: outcome === "failed" ? "customer_not_home" : undefined,
+          reason: outcome === "failed" ? failReason : undefined,
         }),
       });
       const body = await res.json();
       if (!res.ok) throw new Error(body.error ?? "Could not update the delivery");
       setNotice(
         outcome === "delivered"
-          ? `${delivery.order_ref} marked delivered.`
+          ? `${delivery.order_ref} marked delivered${delivery.is_cod ? ` · ${rupees(delivery.cod_amount)} collected` : ""}.`
           : `${delivery.order_ref} marked failed (${body.attempts_left ?? 0} attempts left).`
       );
       await load();
@@ -70,91 +79,118 @@ export default function RiderView() {
   }
 
   if (error && !data) {
-    return (
-      <div className="rounded-2xl border border-rose-900/60 bg-rose-950/30 p-4 text-sm text-rose-300">
-        {error}
-      </div>
-    );
+    return <div className="rounded-2xl border border-rose-500/25 bg-rose-500/10 p-4 text-sm text-rose-300">{error}</div>;
   }
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
-        <label htmlFor="rider" className="text-xs uppercase tracking-wider text-slate-500">
-          Riding as
-        </label>
-        <select
-          id="rider"
-          value={rider?.id ?? ""}
-          onChange={(e) => {
-            setRiderId(e.target.value);
-            setNotice("");
-          }}
-          className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none sm:max-w-sm"
-        >
-          {riders.map((r) => (
-            <option key={r.id} value={r.id}>
-              {r.name} · {r.zone_name}
-              {r.shift ? ` · ${r.shift.start}-${r.shift.end}` : " · no shift today"}
-            </option>
-          ))}
-        </select>
+      <div className="card p-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-emerald-400/12 text-sm font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/25">
+            {rider ? initials(rider.name) : "–"}
+          </span>
+          <div className="min-w-0 flex-1">
+            <label htmlFor="rider" className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+              Riding as
+            </label>
+            <select
+              id="rider"
+              value={rider?.id ?? ""}
+              onChange={(e) => {
+                setRiderId(e.target.value);
+                setNotice("");
+                setError("");
+              }}
+              className="select mt-1"
+            >
+              {riders.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.name} · {r.zone_name}
+                  {r.shift ? ` · ${r.shift.start}-${r.shift.end}` : " · no shift today"}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
         {rider && (
-          <p className="mt-2 text-xs text-slate-400">
-            {rider.id} · {rider.vehicle} · {rider.zone_name}
-            {rider.shift ? ` · shift ${rider.shift.start}-${rider.shift.end}` : " · no shift today"}
-          </p>
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            <span className="chip font-mono">{rider.id}</span>
+            <span className="chip capitalize">{rider.vehicle}</span>
+            <span className="chip">{rider.zone_name}</span>
+            <span className="chip">
+              {rider.shift ? `shift ${rider.shift.start}-${rider.shift.end}` : "no shift today"}
+            </span>
+            <span className="chip">{rider.active.length} open stops</span>
+          </div>
         )}
       </div>
 
       {rider && (
         <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-2xl border border-emerald-900/50 bg-emerald-950/20 p-3">
-            <p className="text-[11px] uppercase tracking-wider text-emerald-400">COD collected</p>
-            <p className="mt-1 text-xl font-semibold text-slate-50">{rupees(rider.cod_collected)}</p>
-            <p className="text-[11px] text-slate-400">{rider.delivered_count} delivered today</p>
+          <div className="card border-emerald-400/20 p-3.5">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-300/90">COD collected</p>
+            <p className="mt-1 font-mono text-2xl font-semibold text-slate-50 tabular-nums">
+              {rupees(rider.cod_collected)}
+            </p>
+            <p className="mt-0.5 text-[11px] text-slate-400">{rider.delivered_count} delivered today</p>
           </div>
-          <div className="rounded-2xl border border-amber-900/50 bg-amber-950/20 p-3">
-            <p className="text-[11px] uppercase tracking-wider text-amber-400">COD to collect</p>
-            <p className="mt-1 text-xl font-semibold text-slate-50">{rupees(rider.cod_pending)}</p>
-            <p className="text-[11px] text-slate-400">{rider.active.length} open stops</p>
+          <div className="card border-amber-400/20 p-3.5">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-300/90">COD to collect</p>
+            <p className="mt-1 font-mono text-2xl font-semibold text-slate-50 tabular-nums">
+              {rupees(rider.cod_pending)}
+            </p>
+            <p className="mt-0.5 text-[11px] text-slate-400">{rider.active.length} open stops</p>
           </div>
         </div>
       )}
 
       {notice && (
-        <p className="rounded-lg border border-emerald-900/60 bg-emerald-950/30 px-3 py-2 text-xs text-emerald-300">
+        <p className="flex items-start gap-2 rounded-xl border border-emerald-400/25 bg-emerald-400/10 px-3 py-2 text-[12px] text-emerald-200">
+          <span aria-hidden="true">✓</span>
           {notice}
         </p>
       )}
       {error && (
-        <p className="rounded-lg border border-rose-900/60 bg-rose-950/30 px-3 py-2 text-xs text-rose-300">
-          {error}
-        </p>
+        <p className="rounded-xl border border-rose-500/25 bg-rose-500/10 px-3 py-2 text-[12px] text-rose-300">{error}</p>
       )}
 
-      <section className="rounded-2xl border border-slate-800 bg-slate-900/60">
-        <header className="border-b border-slate-800 px-4 py-3">
-          <h2 className="text-sm font-semibold text-slate-100">Today&rsquo;s stops</h2>
-          <p className="text-[11px] text-slate-400">
-            {rider ? "Mark each stop delivered or failed. Updates the deliveries board." : "Pick a rider."}
-          </p>
-        </header>
+      <section className="card overflow-hidden">
+        <div className="card-head flex-wrap">
+          <div>
+            <h2 className="text-[15px] font-semibold text-slate-50">Today&rsquo;s stops</h2>
+            <p className="text-[11px] text-slate-400">Mark each stop. The deliveries board updates within 5 seconds.</p>
+          </div>
+          <label className="flex items-center gap-2 text-[11px] text-slate-500">
+            If failed
+            <select
+              value={failReason}
+              onChange={(e) => setFailReason(e.target.value as FailReason)}
+              className="select w-auto py-1 text-[11px]"
+              aria-label="Failure reason"
+            >
+              {FAIL_REASONS.map((r) => (
+                <option key={r.value} value={r.value}>
+                  {r.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
 
-        <ul className="divide-y divide-slate-800">
+        <ul className="divide-y divide-white/[0.05]">
           {rider?.active.map((d) => (
-            <li key={d.id} className="px-3 py-3 sm:px-4">
+            <li key={d.id} className="px-3 py-3 transition hover:bg-white/[0.02] sm:px-4">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <p className="font-mono text-[11px] font-semibold text-slate-100">{d.order_ref}</p>
-                  <p className="truncate text-sm text-slate-200">{d.customer_name}</p>
+                  <p className="truncate text-[13px] text-slate-200">{d.customer_name}</p>
                   <p className="truncate text-[11px] text-slate-500">{d.address}</p>
                 </div>
                 <span
                   className={
                     d.is_cod
-                      ? "shrink-0 rounded bg-amber-500/15 px-1.5 py-0.5 text-[10px] text-amber-300"
-                      : "shrink-0 rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-400"
+                      ? "shrink-0 rounded bg-amber-400/15 px-1.5 py-0.5 text-[10px] font-medium text-amber-300"
+                      : "shrink-0 rounded bg-white/[0.06] px-1.5 py-0.5 text-[10px] text-slate-400"
                   }
                 >
                   {d.is_cod ? `COD ${rupees(d.cod_amount)}` : "prepaid"}
@@ -162,24 +198,34 @@ export default function RiderView() {
               </div>
 
               <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[10px] text-slate-400">
-                <span className="rounded bg-slate-800 px-1.5 py-0.5">{d.zone_name}</span>
+                <span className="chip">{d.zone_name}</span>
                 <span className="capitalize">{d.time_window}</span>
                 <span className="capitalize">{d.parcel_size}</span>
-                <span className="rounded bg-slate-800 px-1.5 py-0.5">{d.attempts}/3 attempts</span>
+                <span className="inline-flex items-center gap-1">
+                  <span className="flex gap-0.5">
+                    {[0, 1, 2].map((i) => (
+                      <span
+                        key={i}
+                        className={i < d.attempts ? "h-1 w-1 rounded-full bg-amber-400" : "h-1 w-1 rounded-full bg-slate-700"}
+                      />
+                    ))}
+                  </span>
+                  {d.attempts}/3
+                </span>
               </div>
 
               <div className="mt-3 grid grid-cols-2 gap-2">
                 <button
                   onClick={() => mark(d, "delivered")}
                   disabled={busyId === d.id}
-                  className="rounded-lg bg-emerald-500 px-3 py-2 text-xs font-medium text-slate-950 disabled:opacity-40"
+                  className="btn btn-primary py-2 text-[12px]"
                 >
                   {busyId === d.id ? "Saving…" : "Delivered"}
                 </button>
                 <button
                   onClick={() => mark(d, "failed")}
                   disabled={busyId === d.id}
-                  className="rounded-lg border border-rose-800/70 px-3 py-2 text-xs font-medium text-rose-300 disabled:opacity-40"
+                  className="btn btn-danger py-2 text-[12px]"
                 >
                   Failed
                 </button>
@@ -188,46 +234,95 @@ export default function RiderView() {
           ))}
 
           {rider && rider.active.length === 0 && (
-            <li className="px-4 py-5 text-sm text-slate-400">
+            <li className="px-4 py-6 text-center text-[13px] text-slate-400">
               No open stops for {rider.name} today.
             </li>
           )}
+          {!rider && !error && <li className="px-4 py-6 skeleton h-16" />}
         </ul>
       </section>
 
-      <CodSummary riders={riders} />
+      <CodSummary riders={riders} today={data?.today ?? ""} />
     </div>
   );
 }
 
 /** Daily cash-on-delivery totals for every rider, for the hub supervisor. */
-function CodSummary({ riders }: { riders: RiderSummary[] }) {
+function CodSummary({ riders, today }: { riders: RiderSummary[]; today: string }) {
   const total = riders.reduce((sum, r) => sum + r.cod_collected, 0);
   const rows = [...riders].sort((a, b) => b.cod_collected - a.cod_collected);
+  const max = Math.max(...rows.map((r) => r.cod_collected), 1);
 
   return (
-    <section className="rounded-2xl border border-slate-800 bg-slate-900/40">
-      <header className="flex flex-wrap items-baseline justify-between gap-2 border-b border-slate-800 px-4 py-3">
+    <section className="card overflow-hidden">
+      <div className="card-head flex-wrap">
         <div>
-          <h2 className="text-sm font-semibold text-slate-100">Cash on delivery today</h2>
+          <p className="eyebrow">Cash</p>
+          <h2 className="mt-0.5 text-[15px] font-semibold text-slate-50">Cash on delivery today</h2>
           <p className="text-[11px] text-slate-400">Collected per rider, from delivered COD parcels</p>
         </div>
-        <p className="text-sm font-semibold text-emerald-300">{rupees(total)}</p>
-      </header>
-      <ul className="divide-y divide-slate-800">
+        <div className="flex items-center gap-3">
+          <p className="font-mono text-[15px] font-semibold text-emerald-300">{rupees(total)}</p>
+          <button
+            onClick={() => exportCsv(rows, today)}
+            disabled={rows.length === 0}
+            className="btn btn-ghost px-2.5 py-1 text-[11px]"
+          >
+            Export CSV
+          </button>
+        </div>
+      </div>
+      <ul className="divide-y divide-white/[0.05]">
         {rows.map((r) => (
-          <li key={r.id} className="flex items-center justify-between gap-3 px-4 py-2 text-xs">
-            <span className="min-w-0 truncate text-slate-200">
-              {r.name}
-              <span className="ml-1.5 text-[10px] text-slate-500">{r.zone_name}</span>
-            </span>
-            <span className="shrink-0 text-slate-300">
+          <li key={r.id} className="flex items-center gap-3 px-4 py-2">
+            <span className="w-28 shrink-0 truncate text-[12px] text-slate-200 sm:w-40">{r.name}</span>
+            <div className="hidden h-1 flex-1 overflow-hidden rounded-full bg-white/[0.07] sm:block">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-emerald-400/70 to-emerald-400"
+                style={{ width: `${Math.round((r.cod_collected / max) * 100)}%` }}
+              />
+            </div>
+            <span className="ml-auto shrink-0 font-mono text-[12px] text-slate-300 tabular-nums">
               {rupees(r.cod_collected)}
-              <span className="ml-1.5 text-[10px] text-slate-500">{r.delivered_count} done</span>
             </span>
+            <span className="w-16 shrink-0 text-right text-[10px] text-slate-500">{r.delivered_count} done</span>
           </li>
         ))}
+        {rows.length === 0 && <li className="px-4 py-5 text-[12px] text-slate-500">No riders yet.</li>}
       </ul>
     </section>
   );
+}
+
+function exportCsv(riders: RiderSummary[], today: string) {
+  const header = ["rider_id", "name", "zone", "delivered_today", "cod_collected", "cod_pending"];
+  const lines = [
+    header.join(","),
+    ...riders.map((r) =>
+      [r.id, r.name, r.zone_name, r.delivered_count, r.cod_collected, r.cod_pending].map(csvCell).join(",")
+    ),
+  ];
+  const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `routewise-cod-${today || "today"}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function csvCell(value: string | number): string {
+  const text = String(value);
+  return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+}
+
+function initials(name: string): string {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
 }

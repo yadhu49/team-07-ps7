@@ -30,10 +30,11 @@ Never update `deliveries`, `riders` or `rider_shifts` directly from TypeScript. 
 app/page.tsx                 Dispatch chat screen
 app/board/page.tsx           Deliveries board (5 statuses)
 app/riders/page.tsx          Riders with load
-app/rider/page.tsx           Rider view: mark delivered/failed, COD totals
+app/rider/page.tsx           Rider view: mark delivered/failed, COD totals, CSV export
 app/api/agent/route.ts       POST /api/agent - runs the agent
 app/api/board/route.ts       GET /api/board - deliveries + riders for the screens
 app/api/rider/route.ts       GET rider summaries + COD; POST mark delivered/failed
+app/globals.css              Design system: cards, buttons, inputs, chips, background
 app/api/health/route.ts      Which settings are missing, and is the deliveries table there
 components/AgentChat.tsx     Chat + tool call cards
 components/DeliveriesBoard.tsx

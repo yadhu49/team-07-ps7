@@ -16,7 +16,8 @@ Logged-in user: **dispatcher D01, Anitha V** (Chennai hub).
 - Assigns deliveries through the database function `assign_delivery()`, which checks every business rule.
 - Reschedules failed deliveries through `reschedule_delivery()`, with a hard limit of 3 attempts per delivery.
 - Four screens: dispatch chat, deliveries board (Pending, Assigned, Out for delivery, Delivered, Failed), riders with their live load, and a rider view where a rider marks a stop delivered or failed.
-- Daily cash-on-delivery totals per rider, for the hub supervisor.
+- Daily cash-on-delivery totals per rider, for the hub supervisor, exportable as CSV.
+- Deliveries board with search, zone and time-window filters and live status counts.
 
 ## Live demo
 
@@ -62,7 +63,8 @@ Database functions `assign_delivery(delivery_id, rider_id)` and `reschedule_deli
 - `/` dispatch chat + live rider load
 - `/board` deliveries board with the five statuses
 - `/riders` riders, shifts and load
-- `/rider` rider view: pick a rider, mark today's stops delivered or failed, see COD collected and COD still to collect
+- `/rider` rider view: pick a rider, mark today's stops delivered or failed (with a failure reason), see COD collected and COD still to collect, export the day's COD report
+- `/login` passcode gate
 
 ## Tech stack
 
@@ -83,6 +85,16 @@ Next.js (App Router), React, TypeScript, Tailwind CSS, Supabase PostgreSQL, Goog
 2. `Which riders still have free capacity today?` — read-only view of the fleet.
 3. `Reschedule yesterday's failed deliveries to tomorrow morning.` — two failed deliveries move to tomorrow; the one with 3 attempts is refused by the database function.
 4. Open **Rider view**, pick R01, mark a stop delivered: the deliveries board and the COD total update. A failed mark counts an attempt and is refused after 3.
+
+## Interface notes
+
+- Dark operations-console theme: custom cards, buttons, inputs and status chips in `app/globals.css`, Inter for text and JetBrains Mono for order refs and money.
+- Every screen is usable at 360 px: the board stacks its five columns and collapses the header navigation.
+- Live data refreshes every 5 seconds; the agent's tool calls are expandable under each answer so judges can see the arguments and results.
+
+## Before you submit
+
+Replace the `<name 1>`–`<name 4>` placeholders in the Team table with the real names and roles.
 
 ## Run it locally
 
