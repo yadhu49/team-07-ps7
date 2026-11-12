@@ -1,6 +1,6 @@
 # AGENTS.md
 
-RouteWise is the PS7 Delivery Dispatch Agent for the SRM Agentic AI hackathon (Team `<number>`).
+RouteWise is the PS7 Delivery Dispatch Agent for the SRM Agentic AI hackathon (Team 07).
 Everyone on the team and every AI tool works from these rules.
 
 ## The user and the problem

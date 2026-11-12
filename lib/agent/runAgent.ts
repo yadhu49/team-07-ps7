@@ -29,15 +29,28 @@ export async function runAgent(messages: ChatMessage[]): Promise<AgentResult> {
   }));
 
   for (let round = 0; round < MAX_ROUNDS; round++) {
-    const response = await ai.models.generateContent({
-      model: GEMINI_MODEL,
-      contents,
-      config: {
-        systemInstruction: buildSystemPrompt(),
-        tools: [{ functionDeclarations }],
-        temperature: 0.2,
-      },
-    });
+    // Gemini returns 503/429 when a model is busy. Retry a couple of times
+    // instead of failing a dispatch request during the demo.
+    let response;
+    for (let attempt = 0; ; attempt++) {
+      try {
+        response = await ai.models.generateContent({
+          model: GEMINI_MODEL,
+          contents,
+          config: {
+            systemInstruction: buildSystemPrompt(),
+            tools: [{ functionDeclarations }],
+            temperature: 0.2,
+          },
+        });
+        break;
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        const busy = /503|UNAVAILABLE|429|RESOURCE_EXHAUSTED|overloaded|high demand/i.test(message);
+        if (!busy || attempt >= 2) throw err;
+        await new Promise((resolve) => setTimeout(resolve, 900 * (attempt + 1)));
+      }
+    }
 
     const calls = response.functionCalls ?? [];
 

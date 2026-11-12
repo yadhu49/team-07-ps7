@@ -1,6 +1,6 @@
 # RouteWise: Delivery Dispatch Agent
 
-Team `<number>` | PS7 | SRM Agentic AI Hackathon
+Team 07 | PS7 | SRM Agentic AI Hackathon
 
 ## The problem
 
@@ -19,8 +19,8 @@ Logged-in user: **dispatcher D01, Anitha V** (Chennai hub).
 
 ## Live demo
 
-- Vercel link: `<to fill after deploy>`
-- Passcode: `<to fill after deploy>`
+- Vercel link: live URL after deploy
+- Passcode: `routewise2026`
 - Try this prompt: `Assign all pending Velachery deliveries for this evening.`
 
 ## Agent tools
@@ -70,11 +70,10 @@ Next.js (App Router), React, TypeScript, Tailwind CSS, Supabase PostgreSQL, Goog
 
 | Name | Role |
 | --- | --- |
-| `<name>` | Team Lead |
-| `<name>` | Frontend |
-| `<name>` | Backend / API |
-| `<name>` | Database |
-| `<name>` | AI / Agent |
+| `<name 1>` | Team Lead + Database |
+| `<name 2>` | Frontend |
+| `<name 3>` | Backend / API |
+| `<name 4>` | AI / Agent |
 
 ## Run it locally
 
