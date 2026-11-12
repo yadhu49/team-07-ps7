@@ -19,7 +19,7 @@ Logged-in user: **dispatcher D01, Anitha V** (Chennai hub).
 
 ## Live demo
 
-- Vercel link: live URL after deploy
+- Vercel link: https://routewise-ps7.vercel.app
 - Passcode: `routewise2026`
 - Try this prompt: `Assign all pending Velachery deliveries for this evening.`
 
@@ -74,6 +74,12 @@ Next.js (App Router), React, TypeScript, Tailwind CSS, Supabase PostgreSQL, Goog
 | `<name 2>` | Frontend |
 | `<name 3>` | Backend / API |
 | `<name 4>` | AI / Agent |
+
+## Demo flow for judges
+
+1. `Assign all pending Velachery deliveries for this evening.` — the agent reads pending deliveries and rider capacity, assigns ORD-5006, and then explains why ORD-5007 cannot move (R01 is at 6 of 6, R02 is off today).
+2. `Which riders still have free capacity today?` — read-only view of the fleet.
+3. `Reschedule yesterday's failed deliveries to tomorrow morning.` — two failed deliveries move to tomorrow; the one with 3 attempts is refused by the database function.
 
 ## Run it locally
 
