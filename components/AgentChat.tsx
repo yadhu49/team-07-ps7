@@ -55,7 +55,7 @@ export default function AgentChat({ onDataChanged }: { onDataChanged?: () => voi
       <div className="card-head">
         <div>
           <p className="eyebrow">Agent</p>
-          <h2 className="mt-0.5 text-[15px] font-semibold text-slate-50">Dispatch chat</h2>
+          <h2 className="mt-0.5 text-[15px] font-semibold text-fg">Dispatch chat</h2>
         </div>
         <div className="flex items-center gap-2">
           <span className="pill hidden sm:inline-flex">
@@ -68,7 +68,7 @@ export default function AgentChat({ onDataChanged }: { onDataChanged?: () => voi
                 setMessages([]);
                 setError("");
               }}
-              className="rounded-lg border border-white/10 px-2 py-1 text-[11px] text-slate-400 transition hover:bg-white/[0.06] hover:text-slate-100"
+              className="rounded-lg border border-line px-2 py-1 text-[11px] text-muted transition hover:bg-elev hover:text-fg"
             >
               Clear
             </button>
@@ -79,26 +79,26 @@ export default function AgentChat({ onDataChanged }: { onDataChanged?: () => voi
       <div className="flex-1 space-y-4 overflow-y-auto p-3 sm:p-4">
         {messages.length === 0 && (
           <div className="space-y-4">
-            <div className="rounded-2xl border border-emerald-400/15 bg-emerald-400/[0.04] p-4">
-              <p className="text-sm font-medium text-slate-100">Tell me what needs dispatching.</p>
-              <p className="mt-1 text-[12px] leading-relaxed text-slate-400">
+            <div className="rounded-2xl border border-success-line bg-tint-success p-4">
+              <p className="text-sm font-medium text-fg">Tell me what needs dispatching.</p>
+              <p className="mt-1 text-[12px] leading-relaxed text-muted">
                 I read pending deliveries and rider capacity, then assign or reschedule through the database
                 functions. Every tool call is shown below the answer, with its arguments and result.
               </p>
             </div>
             <div className="space-y-2">
-              <p className="text-[11px] uppercase tracking-[0.18em] text-slate-500">Try one of these</p>
+              <p className="text-[11px] uppercase tracking-[0.18em] text-muted">Try one of these</p>
               {SAMPLE_PROMPTS.map((p, i) => (
                 <button
                   key={p}
                   onClick={() => send(p)}
-                  className="group flex w-full items-center gap-3 rounded-xl border border-white/[0.08] bg-white/[0.02] px-3 py-2.5 text-left text-[13px] text-slate-200 transition hover:border-emerald-400/45 hover:bg-emerald-400/[0.06] hover:text-white"
+                  className="group flex w-full items-center gap-3 rounded-xl border border-line bg-elev px-3 py-2.5 text-left text-[13px] text-fg-soft transition hover:border-emerald-400/45 hover:bg-tint-success hover:text-fg"
                 >
-                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md bg-white/[0.06] font-mono text-[10px] text-slate-400 group-hover:bg-emerald-400/20 group-hover:text-emerald-200">
+                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md bg-elev font-mono text-[10px] text-muted group-hover:bg-emerald-400/20 group-hover:text-success">
                     0{i + 1}
                   </span>
                   <span className="min-w-0 flex-1">{p}</span>
-                  <span className="shrink-0 text-slate-600 transition group-hover:translate-x-0.5 group-hover:text-emerald-300">
+                  <span className="shrink-0 text-faint transition group-hover:translate-x-0.5 group-hover:text-success">
                     →
                   </span>
                 </button>
@@ -112,7 +112,7 @@ export default function AgentChat({ onDataChanged }: { onDataChanged?: () => voi
             <div className={m.role === "user" ? "max-w-[85%]" : "max-w-[94%] space-y-2"}>
               {m.steps && m.steps.length > 0 && <ToolSteps steps={m.steps} />}
               {m.role === "model" ? (
-                <div className="rounded-2xl rounded-tl-md border border-white/[0.09] bg-[#0b1220]/85 px-3.5 py-2.5 text-[13px] leading-relaxed whitespace-pre-wrap text-slate-100">
+                <div className="rounded-2xl rounded-tl-md border border-line bg-surface px-3.5 py-2.5 text-[13px] leading-relaxed whitespace-pre-wrap text-fg">
                   {m.text}
                 </div>
               ) : (
@@ -125,7 +125,7 @@ export default function AgentChat({ onDataChanged }: { onDataChanged?: () => voi
         ))}
 
         {loading && (
-          <div className="flex items-center gap-2 text-[13px] text-emerald-300">
+          <div className="flex items-center gap-2 text-[13px] text-success">
             <span className="flex gap-1">
               <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-emerald-400 [animation-delay:-0.3s]" />
               <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-emerald-400 [animation-delay:-0.15s]" />
@@ -135,14 +135,14 @@ export default function AgentChat({ onDataChanged }: { onDataChanged?: () => voi
           </div>
         )}
         {error && (
-          <p className="rounded-lg border border-rose-500/25 bg-rose-500/10 px-3 py-2 text-[12px] text-rose-300">
+          <p className="rounded-lg border border-danger-line bg-tint-danger px-3 py-2 text-[12px] text-danger">
             {error}
           </p>
         )}
         <div ref={bottomRef} />
       </div>
 
-      <div className="border-t border-white/[0.06] p-3">
+      <div className="border-t border-line p-3">
         {messages.length > 0 && (
           <div className="mb-2 flex gap-2 overflow-x-auto pb-1">
             {SAMPLE_PROMPTS.map((p, i) => (
@@ -150,7 +150,7 @@ export default function AgentChat({ onDataChanged }: { onDataChanged?: () => voi
                 key={p}
                 onClick={() => send(p)}
                 disabled={loading}
-                className="shrink-0 rounded-full border border-white/[0.08] bg-white/[0.03] px-2.5 py-1 text-[11px] text-slate-400 transition hover:border-emerald-400/40 hover:text-emerald-200 disabled:opacity-40"
+                className="shrink-0 rounded-full border border-line bg-elev px-2.5 py-1 text-[11px] text-muted transition hover:border-emerald-400/40 hover:text-success disabled:opacity-40"
               >
                 {i === 0 ? "Assign Velachery evening" : i === 1 ? "Free capacity?" : "Reschedule failed"}
               </button>
@@ -186,7 +186,7 @@ function ToolSteps({ steps }: { steps: AgentStep[] }) {
       {steps.map((s, i) => (
         <details
           key={i}
-          className="group rounded-xl border border-white/[0.08] bg-white/[0.02] px-3 py-1.5 text-[11px]"
+          className="group rounded-xl border border-line bg-elev px-3 py-1.5 text-[11px]"
         >
           <summary className="flex cursor-pointer list-none items-center gap-2 select-none">
             <span
@@ -196,16 +196,16 @@ function ToolSteps({ steps }: { steps: AgentStep[] }) {
                   : "h-1.5 w-1.5 shrink-0 rounded-full bg-rose-400"
               }
             />
-            <span className="font-mono font-medium text-slate-100">{s.tool}</span>
-            <span className={s.ok ? "text-emerald-300/90" : "text-rose-300"}>{s.ok ? "ok" : "blocked"}</span>
+            <span className="font-mono font-medium text-fg">{s.tool}</span>
+            <span className={s.ok ? "text-success" : "text-danger"}>{s.ok ? "ok" : "blocked"}</span>
             {s.writes && (
-              <span className="ml-auto shrink-0 rounded bg-amber-400/15 px-1.5 py-0.5 text-[10px] text-amber-300">
+              <span className="ml-auto shrink-0 rounded bg-tint-warn px-1.5 py-0.5 text-[10px] text-warn">
                 writes
               </span>
             )}
-            <span className="ml-auto text-slate-600 transition group-open:rotate-90">›</span>
+            <span className="ml-auto text-faint transition group-open:rotate-90">›</span>
           </summary>
-          <pre className="mt-1.5 overflow-x-auto rounded-lg bg-black/30 p-2 whitespace-pre-wrap text-slate-400">
+          <pre className="mt-1.5 overflow-x-auto rounded-lg bg-elev p-2 whitespace-pre-wrap text-muted">
             {JSON.stringify(
               { args: s.args, ...(s.ok ? { result: s.result } : { error: s.error }) },
               null,

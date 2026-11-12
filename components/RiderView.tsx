@@ -79,18 +79,18 @@ export default function RiderView() {
   }
 
   if (error && !data) {
-    return <div className="rounded-2xl border border-rose-500/25 bg-rose-500/10 p-4 text-sm text-rose-300">{error}</div>;
+    return <div className="rounded-2xl border border-danger-line bg-tint-danger p-4 text-sm text-danger">{error}</div>;
   }
 
   return (
     <div className="space-y-4">
       <div className="card p-4">
         <div className="flex flex-wrap items-center gap-3">
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-emerald-400/12 text-sm font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/25">
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-tint-success text-sm font-semibold text-success ring-1 ring-inset ring-emerald-400/25">
             {rider ? initials(rider.name) : "–"}
           </span>
           <div className="min-w-0 flex-1">
-            <label htmlFor="rider" className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+            <label htmlFor="rider" className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
               Riding as
             </label>
             <select
@@ -127,40 +127,40 @@ export default function RiderView() {
 
       {rider && (
         <div className="grid grid-cols-2 gap-3">
-          <div className="card border-emerald-400/20 p-3.5">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-300/90">COD collected</p>
-            <p className="mt-1 font-mono text-2xl font-semibold text-slate-50 tabular-nums">
+          <div className="card border-success-line p-3.5">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-success">COD collected</p>
+            <p className="mt-1 font-mono text-2xl font-semibold text-fg tabular-nums">
               {rupees(rider.cod_collected)}
             </p>
-            <p className="mt-0.5 text-[11px] text-slate-400">{rider.delivered_count} delivered today</p>
+            <p className="mt-0.5 text-[11px] text-muted">{rider.delivered_count} delivered today</p>
           </div>
-          <div className="card border-amber-400/20 p-3.5">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-300/90">COD to collect</p>
-            <p className="mt-1 font-mono text-2xl font-semibold text-slate-50 tabular-nums">
+          <div className="card border-warn-line p-3.5">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-warn">COD to collect</p>
+            <p className="mt-1 font-mono text-2xl font-semibold text-fg tabular-nums">
               {rupees(rider.cod_pending)}
             </p>
-            <p className="mt-0.5 text-[11px] text-slate-400">{rider.active.length} open stops</p>
+            <p className="mt-0.5 text-[11px] text-muted">{rider.active.length} open stops</p>
           </div>
         </div>
       )}
 
       {notice && (
-        <p className="flex items-start gap-2 rounded-xl border border-emerald-400/25 bg-emerald-400/10 px-3 py-2 text-[12px] text-emerald-200">
+        <p className="flex items-start gap-2 rounded-xl border border-success-line bg-tint-success px-3 py-2 text-[12px] text-success">
           <span aria-hidden="true">✓</span>
           {notice}
         </p>
       )}
       {error && (
-        <p className="rounded-xl border border-rose-500/25 bg-rose-500/10 px-3 py-2 text-[12px] text-rose-300">{error}</p>
+        <p className="rounded-xl border border-danger-line bg-tint-danger px-3 py-2 text-[12px] text-danger">{error}</p>
       )}
 
       <section className="card overflow-hidden">
         <div className="card-head flex-wrap">
           <div>
-            <h2 className="text-[15px] font-semibold text-slate-50">Today&rsquo;s stops</h2>
-            <p className="text-[11px] text-slate-400">Mark each stop. The deliveries board updates within 5 seconds.</p>
+            <h2 className="text-[15px] font-semibold text-fg">Today&rsquo;s stops</h2>
+            <p className="text-[11px] text-muted">Mark each stop. The deliveries board updates within 5 seconds.</p>
           </div>
-          <label className="flex items-center gap-2 text-[11px] text-slate-500">
+          <label className="flex items-center gap-2 text-[11px] text-muted">
             If failed
             <select
               value={failReason}
@@ -177,27 +177,27 @@ export default function RiderView() {
           </label>
         </div>
 
-        <ul className="divide-y divide-white/[0.05]">
+        <ul className="divide-y divide-line">
           {rider?.active.map((d) => (
-            <li key={d.id} className="px-3 py-3 transition hover:bg-white/[0.02] sm:px-4">
+            <li key={d.id} className="px-3 py-3 transition hover:bg-elev sm:px-4">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="font-mono text-[11px] font-semibold text-slate-100">{d.order_ref}</p>
-                  <p className="truncate text-[13px] text-slate-200">{d.customer_name}</p>
-                  <p className="truncate text-[11px] text-slate-500">{d.address}</p>
+                  <p className="font-mono text-[11px] font-semibold text-fg">{d.order_ref}</p>
+                  <p className="truncate text-[13px] text-fg-soft">{d.customer_name}</p>
+                  <p className="truncate text-[11px] text-muted">{d.address}</p>
                 </div>
                 <span
                   className={
                     d.is_cod
-                      ? "shrink-0 rounded bg-amber-400/15 px-1.5 py-0.5 text-[10px] font-medium text-amber-300"
-                      : "shrink-0 rounded bg-white/[0.06] px-1.5 py-0.5 text-[10px] text-slate-400"
+                      ? "shrink-0 rounded bg-tint-warn px-1.5 py-0.5 text-[10px] font-medium text-warn"
+                      : "shrink-0 rounded bg-elev px-1.5 py-0.5 text-[10px] text-muted"
                   }
                 >
                   {d.is_cod ? `COD ${rupees(d.cod_amount)}` : "prepaid"}
                 </span>
               </div>
 
-              <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[10px] text-slate-400">
+              <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[10px] text-muted">
                 <span className="chip">{d.zone_name}</span>
                 <span className="capitalize">{d.time_window}</span>
                 <span className="capitalize">{d.parcel_size}</span>
@@ -206,7 +206,7 @@ export default function RiderView() {
                     {[0, 1, 2].map((i) => (
                       <span
                         key={i}
-                        className={i < d.attempts ? "h-1 w-1 rounded-full bg-amber-400" : "h-1 w-1 rounded-full bg-slate-700"}
+                        className={i < d.attempts ? "h-1 w-1 rounded-full bg-amber-400" : "h-1 w-1 rounded-full bg-track-strong"}
                       />
                     ))}
                   </span>
@@ -234,7 +234,7 @@ export default function RiderView() {
           ))}
 
           {rider && rider.active.length === 0 && (
-            <li className="px-4 py-6 text-center text-[13px] text-slate-400">
+            <li className="px-4 py-6 text-center text-[13px] text-muted">
               No open stops for {rider.name} today.
             </li>
           )}
@@ -258,11 +258,11 @@ function CodSummary({ riders, today }: { riders: RiderSummary[]; today: string }
       <div className="card-head flex-wrap">
         <div>
           <p className="eyebrow">Cash</p>
-          <h2 className="mt-0.5 text-[15px] font-semibold text-slate-50">Cash on delivery today</h2>
-          <p className="text-[11px] text-slate-400">Collected per rider, from delivered COD parcels</p>
+          <h2 className="mt-0.5 text-[15px] font-semibold text-fg">Cash on delivery today</h2>
+          <p className="text-[11px] text-muted">Collected per rider, from delivered COD parcels</p>
         </div>
         <div className="flex items-center gap-3">
-          <p className="font-mono text-[15px] font-semibold text-emerald-300">{rupees(total)}</p>
+          <p className="font-mono text-[15px] font-semibold text-success">{rupees(total)}</p>
           <button
             onClick={() => exportCsv(rows, today)}
             disabled={rows.length === 0}
@@ -272,23 +272,23 @@ function CodSummary({ riders, today }: { riders: RiderSummary[]; today: string }
           </button>
         </div>
       </div>
-      <ul className="divide-y divide-white/[0.05]">
+      <ul className="divide-y divide-line">
         {rows.map((r) => (
           <li key={r.id} className="flex items-center gap-3 px-4 py-2">
-            <span className="w-28 shrink-0 truncate text-[12px] text-slate-200 sm:w-40">{r.name}</span>
-            <div className="hidden h-1 flex-1 overflow-hidden rounded-full bg-white/[0.07] sm:block">
+            <span className="w-28 shrink-0 truncate text-[12px] text-fg-soft sm:w-40">{r.name}</span>
+            <div className="hidden h-1 flex-1 overflow-hidden rounded-full bg-elev sm:block">
               <div
                 className="h-full rounded-full bg-gradient-to-r from-emerald-400/70 to-emerald-400"
                 style={{ width: `${Math.round((r.cod_collected / max) * 100)}%` }}
               />
             </div>
-            <span className="ml-auto shrink-0 font-mono text-[12px] text-slate-300 tabular-nums">
+            <span className="ml-auto shrink-0 font-mono text-[12px] text-fg-soft tabular-nums">
               {rupees(r.cod_collected)}
             </span>
-            <span className="w-16 shrink-0 text-right text-[10px] text-slate-500">{r.delivered_count} done</span>
+            <span className="w-16 shrink-0 text-right text-[10px] text-muted">{r.delivered_count} done</span>
           </li>
         ))}
-        {rows.length === 0 && <li className="px-4 py-5 text-[12px] text-slate-500">No riders yet.</li>}
+        {rows.length === 0 && <li className="px-4 py-5 text-[12px] text-muted">No riders yet.</li>}
       </ul>
     </section>
   );

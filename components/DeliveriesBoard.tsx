@@ -48,12 +48,12 @@ export function weekWindow(window: string): string {
 
 function statusBadge(status: BoardDelivery["status"]) {
   const map: Record<BoardDelivery["status"], string> = {
-    pending: "bg-amber-500/15 text-amber-300",
-    assigned: "bg-sky-500/15 text-sky-300",
-    out_for_delivery: "bg-indigo-500/15 text-indigo-300",
-    delivered: "bg-emerald-500/15 text-emerald-300",
-    failed: "bg-rose-500/15 text-rose-300",
-    returned: "bg-slate-500/20 text-slate-300",
+    pending: "bg-tint-warn text-warn",
+    assigned: "bg-tint-info text-info",
+    out_for_delivery: "bg-tint-info text-info",
+    delivered: "bg-tint-success text-success",
+    failed: "bg-tint-danger text-danger",
+    returned: "bg-elev text-fg-soft",
   };
   return map[status];
 }
@@ -129,7 +129,7 @@ export default function DeliveriesBoard({ refreshKey = 0 }: { refreshKey?: numbe
 
   if (error) {
     return (
-      <div className="rounded-2xl border border-rose-500/25 bg-rose-500/10 p-4 text-sm text-rose-300">
+      <div className="rounded-2xl border border-danger-line bg-tint-danger p-4 text-sm text-danger">
         {error}
       </div>
     );
@@ -146,9 +146,9 @@ export default function DeliveriesBoard({ refreshKey = 0 }: { refreshKey?: numbe
             <div key={col.key} className="card px-3 py-2.5">
               <div className="flex items-center gap-1.5">
                 <span className={`h-1.5 w-1.5 rounded-full ${col.dot}`} />
-                <p className="truncate text-[11px] text-slate-400">{col.label}</p>
+                <p className="truncate text-[11px] text-muted">{col.label}</p>
               </div>
-              <p className="mt-1 font-mono text-xl font-semibold text-slate-50 tabular-nums">
+              <p className="mt-1 font-mono text-xl font-semibold text-fg tabular-nums">
                 {count ?? "–"}
               </p>
             </div>
@@ -158,7 +158,7 @@ export default function DeliveriesBoard({ refreshKey = 0 }: { refreshKey?: numbe
 
       <div className="card flex flex-col gap-2 p-3 md:flex-row md:items-center">
         <div className="relative min-w-0 flex-1">
-          <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-slate-500">⌕</span>
+          <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted">⌕</span>
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -195,7 +195,7 @@ export default function DeliveriesBoard({ refreshKey = 0 }: { refreshKey?: numbe
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-slate-400">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-muted">
         <span>
           {data ? `${filtered.length} of ${deliveries.length} deliveries` : "Loading deliveries…"}
           {filtering && (
@@ -205,14 +205,14 @@ export default function DeliveriesBoard({ refreshKey = 0 }: { refreshKey?: numbe
                 setZone("all");
                 setWindowFilter("all");
               }}
-              className="ml-2 rounded border border-white/10 px-1.5 py-0.5 text-[11px] text-slate-400 hover:text-slate-100"
+              className="ml-2 rounded border border-line px-1.5 py-0.5 text-[11px] text-muted hover:text-fg"
             >
               clear filters
             </button>
           )}
         </span>
-        {data && <span className="text-slate-500">Today is {dayLabel(data.today)} · refreshes every 5 seconds</span>}
-        <span className="ml-auto inline-flex items-center gap-1.5 text-amber-300/90">
+        {data && <span className="text-muted">Today is {dayLabel(data.today)} · refreshes every 5 seconds</span>}
+        <span className="ml-auto inline-flex items-center gap-1.5 text-warn">
           COD still to collect <span className="font-mono font-semibold">{rupees(codToCollect)}</span>
         </span>
       </div>
@@ -223,12 +223,12 @@ export default function DeliveriesBoard({ refreshKey = 0 }: { refreshKey?: numbe
           return (
             <section key={col.key} className="card flex min-h-[170px] flex-col overflow-hidden">
               <div className={`h-px w-full bg-gradient-to-r ${col.accent} to-transparent`} />
-              <header className="flex items-center justify-between gap-2 border-b border-white/[0.06] px-3 py-2">
+              <header className="flex items-center justify-between gap-2 border-b border-line px-3 py-2">
                 <div className="flex min-w-0 items-center gap-2">
                   <span className={`h-2 w-2 shrink-0 rounded-full ${col.dot}`} />
-                  <h2 className="truncate text-[13px] font-semibold text-slate-200">{col.label}</h2>
+                  <h2 className="truncate text-[13px] font-semibold text-fg-soft">{col.label}</h2>
                 </div>
-                <span className="shrink-0 rounded-full bg-white/[0.07] px-2 py-0.5 font-mono text-[11px] text-slate-300">
+                <span className="shrink-0 rounded-full bg-elev px-2 py-0.5 font-mono text-[11px] text-fg-soft">
                   {items.length}
                 </span>
               </header>
@@ -237,7 +237,7 @@ export default function DeliveriesBoard({ refreshKey = 0 }: { refreshKey?: numbe
                   <DeliveryCard key={d.id} delivery={d} />
                 ))}
                 {items.length === 0 && (
-                  <p className="px-1 py-4 text-[11px] text-slate-600">
+                  <p className="px-1 py-4 text-[11px] text-faint">
                     {filtering ? "No match here." : "Nothing here."}
                   </p>
                 )}
@@ -254,16 +254,16 @@ export default function DeliveriesBoard({ refreshKey = 0 }: { refreshKey?: numbe
 
 function DeliveryCard({ delivery: d }: { delivery: BoardDelivery }) {
   return (
-    <article className="rounded-xl border border-white/[0.07] bg-[#080f1c]/80 p-2.5 text-xs transition hover:border-emerald-400/25 hover:bg-[#0a1424]">
+    <article className="rounded-xl border border-line bg-surface p-2.5 text-xs transition hover:border-success-line hover:bg-[#0a1424]">
       <div className="flex items-center justify-between gap-2">
-        <span className="font-mono text-[11px] font-semibold text-slate-100">{d.order_ref}</span>
+        <span className="font-mono text-[11px] font-semibold text-fg">{d.order_ref}</span>
         <span className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] ${statusBadge(d.status)}`}>
           {d.status.replace(/_/g, " ")}
         </span>
       </div>
-      <p className="mt-1 truncate text-slate-200">{d.customer_name}</p>
-      <p className="truncate text-[11px] text-slate-500">{d.address}</p>
-      <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[10px] text-slate-400">
+      <p className="mt-1 truncate text-fg-soft">{d.customer_name}</p>
+      <p className="truncate text-[11px] text-muted">{d.address}</p>
+      <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[10px] text-muted">
         <span className="chip">{d.zone_name}</span>
         <span>
           {dayLabel(d.delivery_date)} · {weekWindow(d.time_window)}
@@ -272,24 +272,24 @@ function DeliveryCard({ delivery: d }: { delivery: BoardDelivery }) {
       </div>
       <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[10px]">
         {d.is_cod && (
-          <span className="rounded bg-amber-400/15 px-1.5 py-0.5 font-medium text-amber-300">
+          <span className="rounded bg-tint-warn px-1.5 py-0.5 font-medium text-warn">
             COD ₹{Number(d.cod_amount).toLocaleString("en-IN")}
           </span>
         )}
         {d.attempts > 0 && (
-          <span className="inline-flex items-center gap-1 text-slate-300">
+          <span className="inline-flex items-center gap-1 text-fg-soft">
             <span className="flex gap-0.5">
               {[0, 1, 2].map((i) => (
                 <span
                   key={i}
-                  className={i < d.attempts ? "h-1 w-1 rounded-full bg-rose-400" : "h-1 w-1 rounded-full bg-slate-700"}
+                  className={i < d.attempts ? "h-1 w-1 rounded-full bg-rose-400" : "h-1 w-1 rounded-full bg-track-strong"}
                 />
               ))}
             </span>
             {d.attempts}/3
           </span>
         )}
-        <span className={d.rider_name ? "text-slate-300" : "text-slate-600"}>{d.rider_name ?? "no rider"}</span>
+        <span className={d.rider_name ? "text-fg-soft" : "text-faint"}>{d.rider_name ?? "no rider"}</span>
       </div>
     </article>
   );
@@ -299,8 +299,8 @@ function RiderStrip({ riders }: { riders: BoardRider[] }) {
   return (
     <div className="card p-3">
       <div className="mb-2.5 flex items-center justify-between">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">Rider load today</p>
-        <p className="text-[11px] text-slate-500">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">Rider load today</p>
+        <p className="text-[11px] text-muted">
           {riders.filter((r) => r.free > 0).length} of {riders.length} with free capacity
         </p>
       </div>
@@ -308,26 +308,26 @@ function RiderStrip({ riders }: { riders: BoardRider[] }) {
         {riders.map((r) => {
           const pct = Math.min(Math.round((r.active / Math.max(r.capacity, 1)) * 100), 100);
           return (
-            <div key={r.id} className="rounded-xl border border-white/[0.07] bg-white/[0.02] px-2.5 py-2">
+            <div key={r.id} className="rounded-xl border border-line bg-elev px-2.5 py-2">
               <div className="flex items-baseline justify-between gap-2">
-                <span className="truncate text-[12px] text-slate-200">{r.name}</span>
+                <span className="truncate text-[12px] text-fg-soft">{r.name}</span>
                 <span
                   className={
                     r.free > 0
-                      ? "shrink-0 font-mono text-[11px] text-emerald-300"
-                      : "shrink-0 font-mono text-[11px] text-rose-300"
+                      ? "shrink-0 font-mono text-[11px] text-success"
+                      : "shrink-0 font-mono text-[11px] text-danger"
                   }
                 >
                   {r.active}/{r.capacity}
                 </span>
               </div>
-              <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-white/[0.07]">
+              <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-elev">
                 <div
                   className={pct >= 100 ? "h-full bg-rose-400" : pct >= 80 ? "h-full bg-amber-400" : "h-full bg-emerald-400"}
                   style={{ width: `${pct}%` }}
                 />
               </div>
-              <p className="mt-1 text-[10px] text-slate-500">
+              <p className="mt-1 text-[10px] text-muted">
                 {r.zone_name} · {r.shift ? `${r.shift.start}-${r.shift.end}` : "no shift"}
               </p>
             </div>

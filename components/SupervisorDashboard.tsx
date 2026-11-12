@@ -51,7 +51,7 @@ export default function SupervisorDashboard() {
   }, []);
 
   if (error && !data) {
-    return <div className="rounded-2xl border border-rose-500/25 bg-rose-500/10 p-4 text-sm text-rose-300">{error}</div>;
+    return <div className="rounded-2xl border border-danger-line bg-tint-danger p-4 text-sm text-danger">{error}</div>;
   }
 
   if (!data) {
@@ -69,11 +69,11 @@ export default function SupervisorDashboard() {
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[12px] text-slate-400">
-        <span className="text-slate-300">Today is {shortDay(t.date)}</span>
-        <span className="text-slate-600">·</span>
+      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[12px] text-muted">
+        <span className="text-fg-soft">Today is {shortDay(t.date)}</span>
+        <span className="text-faint">·</span>
         <span>{t.deliveries} deliveries scheduled</span>
-        <span className="text-slate-600">·</span>
+        <span className="text-faint">·</span>
         <span>refreshes every 10 seconds</span>
       </div>
 
@@ -93,9 +93,9 @@ export default function SupervisorDashboard() {
           <div className="card-head">
             <div>
               <p className="eyebrow">Seven days</p>
-              <h2 className="mt-0.5 text-[15px] font-semibold text-slate-50">Delivered vs failed</h2>
+              <h2 className="mt-0.5 text-[15px] font-semibold text-fg">Delivered vs failed</h2>
             </div>
-            <div className="flex items-center gap-3 text-[10px] text-slate-400">
+            <div className="flex items-center gap-3 text-[10px] text-muted">
               <Legend className="bg-emerald-400" label="delivered" />
               <Legend className="bg-rose-400" label="failed" />
             </div>
@@ -107,7 +107,7 @@ export default function SupervisorDashboard() {
           <div className="card-head">
             <div>
               <p className="eyebrow">Why stops fail</p>
-              <h2 className="mt-0.5 text-[15px] font-semibold text-slate-50">Failure reasons</h2>
+              <h2 className="mt-0.5 text-[15px] font-semibold text-fg">Failure reasons</h2>
             </div>
             <span className="pill">last 7 days</span>
           </div>
@@ -119,33 +119,33 @@ export default function SupervisorDashboard() {
         <div className="card-head">
           <div>
             <p className="eyebrow">Zones</p>
-            <h2 className="mt-0.5 text-[15px] font-semibold text-slate-50">Today by zone</h2>
+            <h2 className="mt-0.5 text-[15px] font-semibold text-fg">Today by zone</h2>
           </div>
           <span className="pill">{data.zones.length} zones</span>
         </div>
-        <ul className="divide-y divide-white/[0.05]">
+        <ul className="divide-y divide-line">
           {data.zones.map((z) => {
             const done = z.total === 0 ? 0 : Math.round((z.delivered / z.total) * 100);
             return (
               <li key={z.zone_id} className="px-4 py-2.5">
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                  <span className="min-w-[110px] text-[13px] text-slate-200">{z.zone_name}</span>
-                  <span className="font-mono text-[11px] text-slate-500">{z.total} deliveries</span>
+                  <span className="min-w-[110px] text-[13px] text-fg-soft">{z.zone_name}</span>
+                  <span className="font-mono text-[11px] text-muted">{z.total} deliveries</span>
                   <span className="ml-auto flex items-center gap-2 text-[11px]">
-                    <span className="text-emerald-300">{z.delivered} done</span>
-                    <span className="text-rose-300">{z.failed} failed</span>
-                    <span className="text-sky-300">{z.open} open</span>
-                    <span className="w-20 text-right text-amber-300/90">{rupees(z.cod_open)}</span>
+                    <span className="text-success">{z.delivered} done</span>
+                    <span className="text-danger">{z.failed} failed</span>
+                    <span className="text-info">{z.open} open</span>
+                    <span className="w-20 text-right text-warn">{rupees(z.cod_open)}</span>
                   </span>
                 </div>
-                <div className="mt-1.5 flex h-1.5 overflow-hidden rounded-full bg-white/[0.07]">
+                <div className="mt-1.5 flex h-1.5 overflow-hidden rounded-full bg-elev">
                   <div className="h-full bg-emerald-400" style={{ width: `${done}%` }} />
                   <div className="h-full bg-rose-400/80" style={{ width: `${z.total === 0 ? 0 : (z.failed / z.total) * 100}%` }} />
                 </div>
               </li>
             );
           })}
-          {data.zones.length === 0 && <li className="px-4 py-5 text-[12px] text-slate-500">No deliveries today.</li>}
+          {data.zones.length === 0 && <li className="px-4 py-5 text-[12px] text-muted">No deliveries today.</li>}
         </ul>
       </section>
 
@@ -153,14 +153,14 @@ export default function SupervisorDashboard() {
         <div className="card-head">
           <div>
             <p className="eyebrow">Riders</p>
-            <h2 className="mt-0.5 text-[15px] font-semibold text-slate-50">Rider performance today</h2>
+            <h2 className="mt-0.5 text-[15px] font-semibold text-fg">Rider performance today</h2>
           </div>
           <span className="pill">{data.riders.length} riders working</span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[520px] text-left text-[12px]">
             <thead>
-              <tr className="text-[10px] uppercase tracking-[0.14em] text-slate-500">
+              <tr className="text-[10px] uppercase tracking-[0.14em] text-muted">
                 <th className="px-4 py-2 font-medium">Rider</th>
                 <th className="px-2 py-2 font-medium">Zone</th>
                 <th className="px-2 py-2 text-right font-medium">Done</th>
@@ -169,35 +169,35 @@ export default function SupervisorDashboard() {
                 <th className="px-4 py-2 text-right font-medium">COD collected</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/[0.05]">
+            <tbody className="divide-y divide-line">
               {data.riders.map((r) => {
                 const pct = r.capacity === 0 ? 0 : Math.round((r.active / r.capacity) * 100);
                 return (
-                  <tr key={r.id} className="text-slate-300">
-                    <td className="px-4 py-2 text-slate-100">{r.name}</td>
-                    <td className="px-2 py-2 text-slate-500">{r.zone_name}</td>
-                    <td className="px-2 py-2 text-right font-mono text-emerald-300">{r.delivered}</td>
-                    <td className="px-2 py-2 text-right font-mono text-rose-300">{r.failed}</td>
+                  <tr key={r.id} className="text-fg-soft">
+                    <td className="px-4 py-2 text-fg">{r.name}</td>
+                    <td className="px-2 py-2 text-muted">{r.zone_name}</td>
+                    <td className="px-2 py-2 text-right font-mono text-success">{r.delivered}</td>
+                    <td className="px-2 py-2 text-right font-mono text-danger">{r.failed}</td>
                     <td className="px-2 py-2">
                       <div className="flex items-center gap-2">
-                        <div className="h-1 w-16 overflow-hidden rounded-full bg-white/[0.07]">
+                        <div className="h-1 w-16 overflow-hidden rounded-full bg-elev">
                           <div
                             className={pct >= 100 ? "h-full bg-rose-400" : pct >= 80 ? "h-full bg-amber-400" : "h-full bg-emerald-400"}
                             style={{ width: `${pct}%` }}
                           />
                         </div>
-                        <span className="font-mono text-[10px] text-slate-500">
+                        <span className="font-mono text-[10px] text-muted">
                           {r.active}/{r.capacity}
                         </span>
                       </div>
                     </td>
-                    <td className="px-4 py-2 text-right font-mono text-slate-200">{rupees(r.cod_collected)}</td>
+                    <td className="px-4 py-2 text-right font-mono text-fg-soft">{rupees(r.cod_collected)}</td>
                   </tr>
                 );
               })}
               {data.riders.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-5 text-slate-500">
+                  <td colSpan={6} className="px-4 py-5 text-muted">
                     No rider has deliveries today.
                   </td>
                 </tr>
@@ -233,10 +233,10 @@ function Kpi({
     <div className="card px-3.5 py-3">
       <div className="flex items-center gap-1.5">
         <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
-        <p className="truncate text-[10px] font-medium uppercase tracking-[0.14em] text-slate-500">{label}</p>
+        <p className="truncate text-[10px] font-medium uppercase tracking-[0.14em] text-muted">{label}</p>
       </div>
-      <p className="mt-1.5 font-mono text-xl font-semibold text-slate-50 tabular-nums">{value}</p>
-      <p className="mt-0.5 truncate text-[10px] text-slate-500">{sub}</p>
+      <p className="mt-1.5 font-mono text-xl font-semibold text-fg tabular-nums">{value}</p>
+      <p className="mt-0.5 truncate text-[10px] text-muted">{sub}</p>
     </div>
   );
 }
@@ -273,7 +273,7 @@ function TrendChart({ trend }: { trend: DashboardResponse["trend"] }) {
                   title={`${point.failed} failed`}
                 />
               </div>
-              <span className={isToday ? "text-[10px] font-semibold text-slate-200" : "text-[10px] text-slate-500"}>
+              <span className={isToday ? "text-[10px] font-semibold text-fg-soft" : "text-[10px] text-muted"}>
                 {shortDay(point.date)}
               </span>
             </div>
@@ -287,17 +287,17 @@ function TrendChart({ trend }: { trend: DashboardResponse["trend"] }) {
 function ReasonList({ reasons }: { reasons: DashboardResponse["reasons"] }) {
   const total = reasons.reduce((sum, r) => sum + r.count, 0);
   if (reasons.length === 0) {
-    return <p className="px-4 py-6 text-[12px] text-slate-500">No failed attempts in the last 7 days.</p>;
+    return <p className="px-4 py-6 text-[12px] text-muted">No failed attempts in the last 7 days.</p>;
   }
   return (
     <ul className="space-y-2.5 p-4">
       {reasons.map((r) => (
         <li key={r.reason}>
           <div className="flex items-baseline justify-between gap-2 text-[11px]">
-            <span className="text-slate-300">{REASON_LABELS[r.reason] ?? r.reason}</span>
-            <span className="font-mono text-slate-400">{r.count}</span>
+            <span className="text-fg-soft">{REASON_LABELS[r.reason] ?? r.reason}</span>
+            <span className="font-mono text-muted">{r.count}</span>
           </div>
-          <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-white/[0.07]">
+          <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-elev">
             <div className="h-full rounded-full bg-rose-400/80" style={{ width: `${Math.round((r.count / total) * 100)}%` }} />
           </div>
         </li>
@@ -345,9 +345,9 @@ function BatchAssignPanel({ zones }: { zones: { id: string; name: string }[] }) 
       <div className="card-head">
         <div>
           <p className="eyebrow">One request</p>
-          <h2 className="mt-0.5 text-[15px] font-semibold text-slate-50">Batch assign pending deliveries</h2>
-          <p className="text-[11px] text-slate-400">
-            Every delivery still goes through <span className="font-mono text-slate-300">assign_delivery()</span>, and the
+          <h2 className="mt-0.5 text-[15px] font-semibold text-fg">Batch assign pending deliveries</h2>
+          <p className="text-[11px] text-muted">
+            Every delivery still goes through <span className="font-mono text-fg-soft">assign_delivery()</span>, and the
             rider with the most free capacity in that zone takes it.
           </p>
         </div>
@@ -381,34 +381,34 @@ function BatchAssignPanel({ zones }: { zones: { id: string; name: string }[] }) 
       </div>
 
       {error && (
-        <p className="mx-3 mb-3 rounded-xl border border-rose-500/25 bg-rose-500/10 px-3 py-2 text-[12px] text-rose-300">
+        <p className="mx-3 mb-3 rounded-xl border border-danger-line bg-tint-danger px-3 py-2 text-[12px] text-danger">
           {error}
         </p>
       )}
 
       {result && (
-        <div className="mx-3 mb-3 space-y-2 rounded-xl border border-white/[0.08] bg-black/25 p-3">
-          <p className="text-[12px] text-slate-200">
-            {result.dry_run && <span className="mr-1.5 rounded bg-amber-400/15 px-1.5 py-0.5 text-[10px] text-amber-300">preview</span>}
+        <div className="mx-3 mb-3 space-y-2 rounded-xl border border-line bg-elev p-3">
+          <p className="text-[12px] text-fg-soft">
+            {result.dry_run && <span className="mr-1.5 rounded bg-tint-warn px-1.5 py-0.5 text-[10px] text-warn">preview</span>}
             {result.summary}
           </p>
           {result.assigned.length > 0 && (
             <ul className="grid gap-1 sm:grid-cols-2">
               {result.assigned.map((a) => (
-                <li key={a.order_ref} className="flex items-center justify-between gap-2 text-[11px] text-slate-400">
-                  <span className="font-mono text-slate-200">{a.order_ref}</span>
+                <li key={a.order_ref} className="flex items-center justify-between gap-2 text-[11px] text-muted">
+                  <span className="font-mono text-fg-soft">{a.order_ref}</span>
                   <span className="truncate">
-                    → {a.rider_name} <span className="text-slate-600">{a.rider_id}</span>
+                    → {a.rider_name} <span className="text-faint">{a.rider_id}</span>
                   </span>
                 </li>
               ))}
             </ul>
           )}
           {result.unassigned.length > 0 && (
-            <ul className="space-y-1 border-t border-white/[0.06] pt-2">
+            <ul className="space-y-1 border-t border-line pt-2">
               {result.unassigned.map((u) => (
-                <li key={u.order_ref} className="text-[11px] text-slate-400">
-                  <span className="font-mono text-slate-300">{u.order_ref}</span> — {u.reason}
+                <li key={u.order_ref} className="text-[11px] text-muted">
+                  <span className="font-mono text-fg-soft">{u.order_ref}</span> — {u.reason}
                 </li>
               ))}
             </ul>

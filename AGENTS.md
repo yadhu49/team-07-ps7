@@ -38,13 +38,14 @@ app/api/rider/route.ts       GET rider summaries + COD; POST mark delivered/fail
 app/api/dashboard/route.ts   GET hub KPIs, zone and rider stats, 7-day trend, failure reasons
 app/api/batch-assign/route.ts POST batch assign of pending deliveries (dry_run supported)
 lib/batchAssign.ts           Batch assign service, shared by the endpoint and the agent tool
-app/globals.css              Design system: cards, buttons, inputs, chips, background
+app/globals.css              Design system: theme tokens (dark light), cards, buttons, inputs, chips
 app/api/health/route.ts      Which settings are missing, and is the deliveries table there
 components/AgentChat.tsx     Chat + tool call cards
 components/SupervisorDashboard.tsx  Dashboard + batch assign panel
 components/DeliveriesBoard.tsx
 components/RidersPanel.tsx
-components/AppHeader.tsx
+components/AppHeader.tsx     Brand, nav, theme toggle, logout
+components/ThemeToggle.tsx   Dark and light mode switch (localStorage + data-theme)
 lib/agent/tools.ts           THE SEVEN TOOLS (main work)
 lib/agent/systemPrompt.ts    Gemini's instructions
 lib/agent/runAgent.ts        Agent loop, max 8 rounds
@@ -58,6 +59,9 @@ seed/ps7_delivery_dispatch.sql  Tables, seed data, DB functions
 ## Conventions
 
 - TypeScript and Tailwind CSS only. No new state libraries.
+- Colours come from the theme tokens (`text-fg`, `text-fg-soft`, `text-muted`, `text-faint`, `bg-elev`, `bg-surface`, `bg-header`, `border-line`, `divide-line`, `bg-tint-*`, `text-success|warn|danger|info`, `border-*-line`). Do not hard-code `slate-*`, `white/*` or `#0b1220` in components, or dark/light mode will break.
+- New surfaces use the `.card`, `.card-head`, `.pill`, `.chip`, `.input`, `.select`, `.btn` classes from `app/globals.css`.
+- Team: VisionX, Team 07 — Yadhunandh K, Abhishek S B, Alok Ramteke, Nikhil Kumar Dev. The submission document is `README.md`.
 - Server-only code lives under `lib/` and `app/api/`. The secret key never reaches the browser.
 - Every tool argument is validated with Zod in `defineTool` + `runAgent`.
 - Tool descriptions start with "Use this when ..." so Gemini picks them correctly.
@@ -75,3 +79,4 @@ seed/ps7_delivery_dispatch.sql  Tables, seed data, DB functions
 - `npm run build` passes.
 - A prompt makes the agent call at least two tools, one of which writes, and the board changes on screen.
 - No keys anywhere in git.
+- The colour token list stays complete: every new colour goes into both `[data-theme="dark"]` and `[data-theme="light"]` blocks in `app/globals.css`.

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import ThemeToggle from "./ThemeToggle";
 
 const LINKS = [
   { href: "/", label: "Dispatch chat" },
@@ -20,19 +21,19 @@ export default function AppHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-30 -mx-4 mb-5 border-b border-white/[0.06] bg-[#05080f]/80 px-4 py-3 backdrop-blur-xl md:-mx-6 md:px-6">
+    <header className="sticky top-0 z-30 -mx-4 mb-5 border-b border-line bg-header px-4 py-3 backdrop-blur-xl md:-mx-6 md:px-6">
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <div className="flex items-center gap-2.5">
           <BrandMark />
           <div className="leading-tight">
             <div className="flex items-center gap-2">
-              <h1 className="text-[15px] font-semibold tracking-tight text-slate-50">RouteWise</h1>
+              <h1 className="text-[15px] font-semibold tracking-tight text-fg">RouteWise</h1>
               <span className="pill hidden sm:inline-flex">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_2px_rgba(52,211,153,0.55)]" />
                 live
               </span>
             </div>
-            <p className="text-[11px] text-slate-500">Chennai hub · dispatcher D01 · Anitha V</p>
+            <p className="text-[11px] text-muted">Chennai hub · dispatcher D01 · Anitha V</p>
           </div>
         </div>
 
@@ -46,17 +47,18 @@ export default function AppHeader() {
                 aria-current={active ? "page" : undefined}
                 className={
                   active
-                    ? "rounded-lg bg-emerald-400/12 px-2.5 py-1.5 text-[13px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/30"
-                    : "rounded-lg px-2.5 py-1.5 text-[13px] font-medium text-slate-400 transition hover:bg-white/[0.06] hover:text-slate-100"
+                    ? "rounded-lg bg-tint-success px-2.5 py-1.5 text-[13px] font-semibold text-success ring-1 ring-inset ring-emerald-400/30"
+                    : "rounded-lg px-2.5 py-1.5 text-[13px] font-medium text-muted transition hover:bg-elev hover:text-fg"
                 }
               >
                 {link.label}
               </Link>
             );
           })}
+          <ThemeToggle className="ml-1" />
           <button
             onClick={logout}
-            className="ml-1 rounded-lg px-2 py-1.5 text-[13px] text-slate-500 transition hover:text-slate-200"
+            className="ml-1 rounded-lg px-2 py-1.5 text-[13px] text-muted transition hover:text-fg-soft"
           >
             Log out
           </button>

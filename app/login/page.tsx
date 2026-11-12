@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function LoginPage() {
   const [passcode, setPasscode] = useState("");
@@ -27,6 +28,9 @@ export default function LoginPage() {
 
   return (
     <main className="relative z-10 flex min-h-screen items-center justify-center p-4">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
       <div className="w-full max-w-sm">
         <div className="mb-6 flex items-center gap-3">
           <span className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-600 shadow-[0_14px_30px_-14px_rgba(16,185,129,0.95)]">
@@ -42,14 +46,14 @@ export default function LoginPage() {
             </svg>
           </span>
           <div>
-            <p className="text-lg font-semibold tracking-tight text-slate-50">RouteWise</p>
-            <p className="text-[11px] text-slate-500">Chennai hub · Team 07</p>
+            <p className="text-lg font-semibold tracking-tight text-fg">RouteWise</p>
+            <p className="text-[11px] text-muted">Chennai hub · Team 07</p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="card p-6">
-          <h1 className="text-[15px] font-semibold text-slate-50">Enter team passcode</h1>
-          <p className="mt-1 text-[12px] text-slate-400">
+          <h1 className="text-[15px] font-semibold text-fg">Enter team passcode</h1>
+          <p className="mt-1 text-[12px] text-muted">
             This keeps your dispatch data and your Gemini quota to the team.
           </p>
           <input
@@ -61,12 +65,12 @@ export default function LoginPage() {
             autoFocus
             aria-label="Team passcode"
           />
-          {error && <p className="mt-2 text-[12px] text-rose-400">{error}</p>}
+          {error && <p className="mt-2 text-[12px] text-danger">{error}</p>}
           <button type="submit" disabled={loading || !passcode} className="btn btn-primary mt-4 w-full">
             {loading ? "Checking…" : "Enter dispatch"}
           </button>
-          <p className="mt-3 text-center text-[11px] text-slate-600">
-            Demo passcode: <span className="font-mono text-slate-400">routewise2026</span>
+          <p className="mt-3 text-center text-[11px] text-faint">
+            Demo passcode: <span className="font-mono text-muted">routewise2026</span>
           </p>
         </form>
       </div>
