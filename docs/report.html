@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>RouteWise — Project Report — VisionX, Team 07</title>
+<style>
+  :root { --ink: #101828; --muted: #475467; --line: #e4e7ec; --brand: #047857; --tint: #f4fbf7; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0 auto;
+    padding: 48px 56px 64px;
+    max-width: 900px;
+    font-family: "Segoe UI", Inter, system-ui, -apple-system, sans-serif;
+    font-size: 12.5px;
+    line-height: 1.62;
+    color: var(--ink);
+    background: #fff;
+  }
+  h1 { font-size: 27px; line-height: 1.2; margin: 0 0 6px; letter-spacing: -0.02em; }
+  h1 + p { color: var(--muted); font-size: 13px; margin: 0 0 26px; }
+  h2 { font-size: 19px; margin: 40px 0 12px; padding-bottom: 6px; border-bottom: 2px solid var(--brand); page-break-after: avoid; }
+  h3 { font-size: 13.5px; margin: 24px 0 8px; color: #1d2939; page-break-after: avoid; }
+  p { margin: 0 0 10px; }
+  a { color: var(--brand); text-decoration: none; }
+  ul, ol { margin: 0 0 12px; padding-left: 22px; }
+  li { margin: 3px 0; }
+  code { font-family: "JetBrains Mono", Consolas, monospace; font-size: 11px; background: #f2f4f7; border: 1px solid var(--line); border-radius: 4px; padding: 1px 4px; }
+  pre { background: #0f172a; color: #e2e8f0; border-radius: 8px; padding: 12px 14px; overflow-x: auto; page-break-inside: avoid; }
+  pre code { background: none; border: 0; color: inherit; font-size: 10px; padding: 0; line-height: 1.5; }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0 16px; font-size: 11.5px; page-break-inside: avoid; }
+  th, td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #f9fafb; font-weight: 600; }
+  tbody tr:nth-child(even) { background: #fcfcfd; }
+  blockquote { margin: 12px 0; padding: 10px 14px; border-left: 3px solid var(--brand); background: var(--tint); color: #1d2939; border-radius: 0 6px 6px 0; }
+  figure { margin: 14px 0 18px; page-break-inside: avoid; }
+  figure img { width: 100%; border: 1px solid var(--line); border-radius: 8px; display: block; }
+  figcaption { font-size: 10.5px; color: var(--muted); margin-top: 5px; }
+  hr.rule { border: 0; border-top: 1px solid var(--line); margin: 28px 0; }
+  td img, th img { width: 100%; border: 1px solid var(--line); border-radius: 6px; }
+  @page { size: A4; margin: 14mm 12mm; }
+  @media print {
+    body { padding: 0; max-width: none; font-size: 10.5px; }
+    h1 { font-size: 24px; }
+    h2 { font-size: 17px; page-break-before: auto; }
+    pre { font-size: 9px; }
+    figure img, td img { border-radius: 6px; }
+  }
+</style>
+</head>
+<body>
+<h1>RouteWise — Delivery Dispatch Agent</h1>
+<p><strong>VisionX · Team 07 · Problem Statement 7 · SRM Agentic AI Hackathon</strong></p>
+<table><thead><tr><th>Team member</th><th>Roll number</th><th>Responsibility</th></tr></thead><tbody><tr><td>Yadhunandh K</td><td>RA24110026010949</td><td>Team lead · agent loop, API routes, deployment</td></tr><tr><td>Abhishek S B</td><td>RA241100301243</td><td>Database schema, business-rule functions, seed data</td></tr><tr><td>Alok Ramteke</td><td>RA2411003012526</td><td>Frontend, design system, light/dark themes</td></tr><tr><td>Nikhil Kumar Dev</td><td>RA2411003012594</td><td>Rider flow, QA, documentation</td></tr></tbody></table>
+<p><strong>Live application:</strong> https://routewise-ps7.vercel.app · <strong>Access passcode:</strong> <code>routewise2026</code></p>
+<hr class="rule" />
+<h2>1. Project Overview &amp; Live Demo</h2>
+<h3>1.1 The problem</h3>
+<p>A dispatcher at a city delivery hub assigns every parcel to a rider by hand from a spreadsheet. Three things go wrong every day:</p>
+<ol><li><strong>Unbalanced load.</strong> One rider holds nine parcels while another finishes at noon with four free slots.</li><li><strong>Wrong area.</strong> Riders are sent into zones they do not cover, so addresses are found late or not at all.</li><li><strong>Forgotten failures.</strong> A failed delivery is marked "failed" and never retried, because nobody owns the follow-up.</li></ol>
+<h3>1.2 The solution</h3>
+<p>RouteWise is a dispatch agent for the hub. The dispatcher states the intent in plain English; the agent reads the real delivery list and the real fleet, then performs the dispatch through database functions that enforce every business rule. Nothing is typed into a spreadsheet.</p>
+<blockquote>Dispatcher: <em>"Assign all pending Velachery deliveries for this evening."</em> RouteWise: calls <code>getPendingDeliveries</code> → <code>getAvailableRiders</code> → <code>getRiderLoad</code> → <code>batchAssignDeliveries</code>, reports what it assigned, what is still pending and the exact reason it could not move the rest.</blockquote>
+<p>The app has six screens behind one passcode gate: a passcode screen, the dispatch chat, the deliveries board, the supervisor dashboard, the rider fleet, and the rider view.</p>
+<h3>1.3 Links</h3>
+<table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td><strong>Live deployment (Vercel)</strong></td><td>https://routewise-ps7.vercel.app</td></tr><tr><td><strong>Source repository (GitHub)</strong></td><td>https://github.com/yadhu49/team-07-ps7</td></tr><tr><td><strong>Passcode</strong></td><td><code>routewise2026</code></td></tr><tr><td><strong>Logged-in user</strong></td><td>dispatcher <code>D01</code>, Anitha V — Chennai hub</td></tr><tr><td><strong>Model</strong></td><td>Google Gemini 3.5 Flash, function calling</td></tr></tbody></table>
+<h3>1.4 Key features</h3>
+<table><thead><tr><th>Feature</th><th>Description</th></tr></thead><tbody><tr><td><strong>Agentic dispatch chat</strong></td><td>Natural-language dispatch. Seven tools (four read, three write); every tool call, its arguments and its result are shown under the answer so the work is auditable.</td></tr><tr><td><strong>Rules enforced in Postgres</strong></td><td><code>assign_delivery()</code> and <code>reschedule_delivery()</code> check pending-only, same-zone, on-shift, capacity and the 3-attempt limit. The model cannot bypass them.</td></tr><tr><td><strong>Batch assign</strong></td><td>One request assigns every pending delivery in a zone and time window, spreading them over the riders with the most free capacity. Dry-run preview available.</td></tr><tr><td><strong>Deliveries board</strong></td><td>Five live status columns (pending, assigned, out for delivery, delivered, failed/returned) with search, zone and time-window filters and a COD-to-collect figure.</td></tr><tr><td><strong>Supervisor dashboard</strong></td><td>Delivered / open / failed counts, success rate, COD collected and pending, fleet load, seven-day delivered-vs-failed chart, per-zone progress, rider performance, failure reasons.</td></tr><tr><td><strong>Rider view</strong></td><td>A rider marks each stop delivered or failed (with a failure reason), sees COD collected and COD to collect, and the supervisor can export the day's COD report as CSV.</td></tr><tr><td><strong>Light &amp; dark themes</strong></td><td>One-click switch in the header, remembered per browser, applied before first paint so there is no flash.</td></tr><tr><td><strong>Passcode gate</strong></td><td>Signed session cookie checked for every page and API route, protecting dispatch data and the Gemini quota.</td></tr></tbody></table>
+<h3>1.5 Target audience</h3>
+<table><thead><tr><th>User</th><th>What they do in RouteWise</th></tr></thead><tbody><tr><td><strong>Hub dispatcher</strong> (primary)</td><td>Talks to the agent, watches the board, assigns and reschedules</td></tr><tr><td><strong>Hub supervisor</strong></td><td>Reads the dashboard, runs batch assign, exports COD figures</td></tr><tr><td><strong>Delivery rider</strong></td><td>Opens the rider view on a phone, marks stops delivered or failed</td></tr><tr><td><strong>Hackathon judges</strong></td><td>Audit the tool calls, the database rules and the live screens</td></tr></tbody></table>
+<h3>1.6 Screenshots — dark theme (default)</h3>
+<figure><img src="screenshots/01-dispatch.png" alt="Dispatch chat — ask in plain English, every tool call is shown" /><figcaption>Dispatch chat — ask in plain English, every tool call is shown</figcaption></figure>
+<figure><img src="screenshots/02-board.png" alt="Deliveries board — five statuses, search, zone and window filters" /><figcaption>Deliveries board — five statuses, search, zone and window filters</figcaption></figure>
+<figure><img src="screenshots/03-dashboard.png" alt="Supervisor dashboard — KPIs, batch assign, seven-day trend, zones, riders" /><figcaption>Supervisor dashboard — KPIs, batch assign, seven-day trend, zones, riders</figcaption></figure>
+<h3>1.7 Rider screens</h3>
+<figure><img src="screenshots/04-riders.png" alt="Rider fleet with load and shifts" /><figcaption>Rider fleet with load and shifts</figcaption></figure>
+<figure><img src="screenshots/05-rider-view.png" alt="Rider view — COD totals, today's stops, delivered / failed" /><figcaption>Rider view — COD totals, today's stops, delivered / failed</figcaption></figure>
+<figure><img src="screenshots/06-login.png" alt="Passcode gate" /><figcaption>Passcode gate</figcaption></figure>
+<h3>1.8 Screenshots — light theme</h3>
+<figure><img src="screenshots/07-dashboard-light.png" alt="Supervisor dashboard in light mode" /><figcaption>Supervisor dashboard in light mode</figcaption></figure>
+<figure><img src="screenshots/08-board-light.png" alt="Deliveries board in light mode" /><figcaption>Deliveries board in light mode</figcaption></figure>
+<figure><img src="screenshots/09-dispatch-light.png" alt="Dispatch chat in light mode" /><figcaption>Dispatch chat in light mode</figcaption></figure>
+<hr class="rule" />
+<h2>2. Tech Stack &amp; Architecture</h2>
+<h3>2.1 Stack</h3>
+<table><thead><tr><th>Layer</th><th>Technology</th><th>Why this choice</th></tr></thead><tbody><tr><td><strong>Frontend</strong></td><td>Next.js 16 (App Router), React 19, TypeScript</td><td>One codebase for screens and server routes; server-rendered pages, client components only where interactivity is needed</td></tr><tr><td><strong>Styling</strong></td><td>Tailwind CSS 4 + a CSS-variable token layer in <code>app/globals.css</code></td><td>Themes swap variables instead of rewriting components; a single design system for cards, buttons, inputs and chips</td></tr><tr><td><strong>Validation</strong></td><td>Zod 4</td><td>Every tool argument and API body is validated before execution; the same schemas generate the Gemini function declarations</td></tr><tr><td><strong>Agent</strong></td><td>Google Gemini via <code>@google/genai</code>, function calling</td><td>The model chooses tools from natural language; our code performs every effect</td></tr><tr><td><strong>Backend</strong></td><td>Next.js route handlers (Node runtime)</td><td>Same deployment unit as the UI, no separate service to host</td></tr><tr><td><strong>Database</strong></td><td>Supabase Postgres (Mumbai region)</td><td>Relational integrity, and PL/pgSQL functions that hold the business rules</td></tr><tr><td><strong>Auth</strong></td><td>Passcode → signed, HTTP-only session cookie, verified in <code>proxy.ts</code></td><td>Keeps the app and the Gemini quota to the team</td></tr><tr><td><strong>Hosting</strong></td><td>Vercel (production + preview)</td><td>Zero-config Next.js builds, per-environment secrets, preview URLs per PR</td></tr></tbody></table>
+<h3>2.2 Data flow</h3>
+<pre><code>┌──────────────┐   POST /api/agent { messages }
+│  Browser     │──────────────────────────────────────────┐
+│  dispatcher  │                                          ▼
+│              │                            ┌──────────────────────────┐
+│  chat, board │                            │ app/api/agent/route.ts   │
+│  dashboard,  │                            └───────────┬──────────────┘
+│  rider view  │                                        ▼
+│              │                            ┌──────────────────────────┐
+│              │                            │ lib/agent/runAgent.ts    │  max 8 rounds
+│              │                            │  (Gemini function call)  │  503/429 retry
+│              │                            └───────┬─────────▲────────┘
+│              │        { reply, steps }            │ tool    │ result
+│              │◄───────────────────────────────────┘ call    │
+└──────┬───────┘                                            ▼
+       │ polls /api/board, /api/rider,          ┌──────────────────────────┐
+       │ /api/dashboard every 5–10 s            │ lib/agent/tools.ts       │
+       │                                        │  7 tools, Zod validated  │
+       │                                        └───────────┬──────────────┘
+       │                                                    │ reads
+       │                                        writes       │
+       │                                    supabase.rpc()   │
+       │                                        ▼            ▼
+       │                        ┌────────────────────────────────────────┐
+       └───────────────────────►│  Supabase Postgres                     │
+                                │  zones · riders · rider_shifts ·       │
+                                │  deliveries · delivery_attempts        │
+                                │  assign_delivery() · reschedule_...()  │
+                                └────────────────────────────────────────┘</code></pre>
+<p><strong>Server/client boundary.</strong> Everything under <code>lib/</code> and <code>app/api/</code> is server-only and uses the Supabase secret key. The browser only ever receives JSON from our own routes. Row level security is enabled with no public policies, so even a leaked anon key could not read the tables.</p>
+<h3>2.3 Database model</h3>
+<table><thead><tr><th>Table</th><th>Purpose</th></tr></thead><tbody><tr><td><code>zones</code></td><td>Chennai zones and their pincodes</td></tr><tr><td><code>riders</code></td><td>Rider, home zone, vehicle, capacity, active flag</td></tr><tr><td><code>rider_shifts</code></td><td>One row per rider per day, with start and end time</td></tr><tr><td><code>deliveries</code></td><td>Order reference, customer, address, zone, parcel size, COD, date, window, rider, status, attempts</td></tr><tr><td><code>delivery_attempts</code></td><td>Every attempt: rider, outcome, note, timestamp</td></tr></tbody></table>
+<p>Seed data: 5 zones, 8 riders, 11 shifts, 22 deliveries, 7 attempts.</p>
+<h3>2.4 Business rules — enforced in the database</h3>
+<ol><li>A delivery can be assigned only while its status is <code>pending</code>.</li><li>A rider can take deliveries only in their own <code>home_zone</code>.</li><li>A rider can take deliveries only on a day that has a <code>rider_shifts</code> row.</li><li>A rider can hold at most <code>riders.capacity</code> active deliveries (<code>assigned</code> or <code>out_for_delivery</code>).</li><li>A delivery can have at most 3 attempts; a failed delivery must be rescheduled before it can be assigned again.</li></ol>
+<p>Both functions raise plain-English errors, which the agent reads back to the dispatcher.</p>
+<h3>2.5 The theme system</h3>
+<p>Every colour is a CSS variable: <code>:root[data-theme="dark"]</code> and <code>[data-theme="light"]</code> define the same token names (<code>--fg</code>, <code>--muted</code>, <code>--line</code>, <code>--elev</code>, <code>--surface</code>, <code>--tint-*</code>, …). Tailwind exposes them as utilities (<code>text-fg</code>, <code>bg-elev</code>, <code>border-line</code>, <code>text-success</code>), and no component hard-codes a colour. The header toggle flips <code>data-theme</code>, stores the choice in <code>localStorage</code>, and an inline script in the document head applies it before the first paint.</p>
+<hr class="rule" />
+<h2>3. Getting Started (Local Development)</h2>
+<h3>3.1 Prerequisites</h3>
+<table><thead><tr><th>Requirement</th><th>Version / note</th></tr></thead><tbody><tr><td>Node.js</td><td>20 or newer (developed on 22.x)</td></tr><tr><td>npm</td><td>10 or newer (bundled with Node)</td></tr><tr><td>Supabase project</td><td>Free tier is enough; note the project URL and the <code>service_role</code> key</td></tr><tr><td>Gemini API key</td><td>Google AI Studio key with access to a Flash model</td></tr><tr><td>Git</td><td>Any recent version</td></tr></tbody></table>
+<h3>3.2 Clone and install</h3>
+<pre><code># 1. get the code
+git clone https://github.com/yadhu49/team-07-ps7.git
+cd team-07-ps7
+
+# 2. install dependencies (lockfile is committed, keep it)
+npm install
+
+# 3. create the local environment file
+cp .env.example .env.local
+#    then open .env.local and fill in the five values described below</code></pre>
+<h3>3.3 Create the database</h3>
+<p>Open the Supabase dashboard → <strong>SQL Editor</strong> → paste the entire contents of <a href="../seed/ps7_delivery_dispatch.sql"><code>seed/ps7_delivery_dispatch.sql</code></a> → <strong>Run</strong>. It creates the five tables, the seed data, both business-rule functions, and enables RLS.</p>
+<h3>3.4 Environment variables</h3>
+<p>The committed <code>.env.example</code> lists every key the app reads. <code>.env.local</code> is git-ignored — never commit real keys.</p>
+<pre><code># Copy this file to .env.local and fill in your values.
+# Never commit .env.local to GitHub.
+
+# Google AI Studio -&gt; Get API key (one key per team)
+GEMINI_API_KEY=
+
+# Gemini model name. Use the model your trainer gives you.
+GEMINI_MODEL=gemini-3.5-flash
+
+# Supabase -&gt; Project Settings -&gt; Project URL  (only up to .supabase.co)
+SUPABASE_URL=
+
+# Supabase -&gt; Project Settings -&gt; API Keys -&gt; secret key (service_role)
+# Server only. Never use this in frontend code.
+SUPABASE_SECRET_KEY=
+
+# Your team's passcode. It protects your app and your Gemini quota.
+APP_PASSCODE=</code></pre>
+<table><thead><tr><th>Variable</th><th>Required</th><th>Where to get it</th><th>Notes</th></tr></thead><tbody><tr><td><code>GEMINI_API_KEY</code></td><td>yes</td><td>Google AI Studio</td><td>Server-side only; never exposed to the browser</td></tr><tr><td><code>GEMINI_MODEL</code></td><td>yes</td><td>Provided model name</td><td>e.g. <code>gemini-3.5-flash</code></td></tr><tr><td><code>SUPABASE_URL</code></td><td>yes</td><td>Supabase → Project Settings → API</td><td>URL only, up to <code>.supabase.co</code></td></tr><tr><td><code>SUPABASE_SECRET_KEY</code></td><td>yes</td><td>Supabase → API Keys → secret / <code>service_role</code></td><td>Bypasses RLS — server only</td></tr><tr><td><code>APP_PASSCODE</code></td><td>yes</td><td>Chosen by the team</td><td>Gates pages and APIs, protects the quota</td></tr></tbody></table>
+<h3>3.5 Run it</h3>
+<pre><code>npm run dev      # development server at http://localhost:3000
+npm run build    # production build
+npm start        # serve the production build
+npm run typecheck  # TypeScript, no emit</code></pre>
+<p>Open http://localhost:3000, enter the passcode, and try <code>Assign all pending Velachery deliveries for this evening.</code> A configuration check is available at <code>/api/health</code>; it lists missing settings and whether the tables exist.</p>
+<hr class="rule" />
+<h2>4. Deployment &amp; Vercel Configuration</h2>
+<h3>4.1 How the deployment works</h3>
+<p>The GitHub repository is connected to Vercel. Every push to <code>main</code> produces a production deployment, and every other branch or pull request produces an isolated preview deployment. Vercel builds the Next.js app with <code>npm run build</code> and serves the output from its edge network; the API routes run as serverless Node functions.</p>
+<h3>4.2 Build settings</h3>
+<table><thead><tr><th>Setting</th><th>Value</th></tr></thead><tbody><tr><td>Framework preset</td><td>Next.js (auto-detected)</td></tr><tr><td><strong>Install Command</strong></td><td><code>npm install</code></td></tr><tr><td><strong>Build Command</strong></td><td><code>npm run build</code></td></tr><tr><td><strong>Output Directory</strong></td><td><code>.next</code> (framework default — do not override)</td></tr><tr><td>Node.js Version</td><td>22.x</td></tr><tr><td>Root Directory</td><td>repository root</td></tr><tr><td>Environment</td><td>Production (and Preview, if previews should run)</td></tr></tbody></table>
+<h3>4.3 Configuring environment variables securely</h3>
+<ol><li>Vercel dashboard → select the project → <strong>Settings → Environment Variables</strong>.</li><li>Add each of the five keys (<code>GEMINI_API_KEY</code>, <code>GEMINI_MODEL</code>, <code>SUPABASE_URL</code>, <code>SUPABASE_SECRET_KEY</code>, <code>APP_PASSCODE</code>).</li><li>Scope them to <strong>Production</strong> (and <strong>Preview</strong> if you want working previews).</li><li>Mark <code>GEMINI_API_KEY</code>, <code>SUPABASE_SECRET_KEY</code> and <code>APP_PASSCODE</code> as <strong>Sensitive</strong> so they cannot be read back in the UI.</li><li><strong>Redeploy</strong> — Vercel reads environment variables at build and runtime, so an existing deployment keeps the old values.</li><li>Never put keys in the repository, in client components, or in <code>NEXT_PUBLIC_*</code> variables.</li></ol>
+<p>The same values can be pushed from the CLI for a local machine: <code>vercel env add GEMINI_API_KEY production</code>.</p>
+<h3>4.4 Preview deployments</h3>
+<p>Any pull request from a branch in the repository receives its own URL (<code>routewise-ps7-&lt;hash&gt;-&lt;team&gt;.vercel.app</code>). Preview deployments use the preview-scoped environment variables, so a staging database or a staging key can be configured separately. Because the app is protected by the passcode gate, previews are not open dispatch consoles. Deployment protection is disabled on this project so judges can reach production with only the passcode.</p>
+<h3>4.5 Deploying from the CLI (what we actually ran)</h3>
+<pre><code>vercel --prod --yes --team &lt;team-slug&gt;</code></pre>
+<p>Result: https://routewise-ps7.vercel.app — login returns 200, <code>/api/dashboard</code>, <code>/api/board</code> and <code>/api/rider</code> return 200 with a session, and light mode renders from the deployed CSS bundle.</p>
+<hr class="rule" />
+<h2>5. Project Structure</h2>
+<pre><code>team-07-ps7/
+├── app/                            Next.js App Router: pages + API route handlers
+│   ├── layout.tsx                  Root layout, fonts, pre-paint theme script
+│   ├── globals.css                 Design tokens (dark/light), cards, buttons, inputs, chips
+│   ├── page.tsx                    "/" dispatch chat + live rider load
+│   ├── login/page.tsx              Passcode gate screen
+│   ├── board/page.tsx              "/board" deliveries board (five statuses)
+│   ├── dashboard/page.tsx          "/dashboard" supervisor dashboard + batch assign
+│   ├── riders/page.tsx             "/riders" fleet with load and shifts
+│   ├── rider/page.tsx              "/rider" rider view: mark delivered/failed, COD
+│   └── api/                        Server endpoints (Node runtime)
+│       ├── agent/route.ts          POST /api/agent — run the dispatcher agent
+│       ├── board/route.ts          GET  /api/board — deliveries + riders for the screens
+│       ├── rider/route.ts          GET rider summaries + COD, POST mark delivered/failed
+│       ├── dashboard/route.ts      GET hub KPIs, zones, riders, trend, failure reasons
+│       ├── batch-assign/route.ts   POST assign every matching pending delivery
+│       ├── login/route.ts          POST passcode → signed session cookie
+│       ├── logout/route.ts         POST clear the session
+│       └── health/route.ts         GET configuration and schema check
+├── components/                     Client-side UI
+│   ├── AppHeader.tsx               Brand, navigation, theme toggle, logout
+│   ├── ThemeToggle.tsx             Dark ⇄ light switch, persisted in localStorage
+│   ├── AgentChat.tsx               Chat, tool-call cards, prompt suggestions
+│   ├── DeliveriesBoard.tsx         Status columns, search, zone/window filters
+│   ├── RidersPanel.tsx             Fleet list with load bars and free-capacity filter
+│   ├── RiderView.tsx               Rider stops, delivered/failed, COD totals, CSV export
+│   └── SupervisorDashboard.tsx     KPIs, trend chart, zones, riders, batch assign panel
+├── lib/                            Server-only logic (never bundled to the browser)
+│   ├── agent/
+│   │   ├── tools.ts                The seven agent tools (reads + writes)
+│   │   ├── defineTool.ts           Zod schema → Gemini function declaration
+│   │   ├── runAgent.ts             Agent loop: max 8 rounds, 503/429 retry
+│   │   ├── systemPrompt.ts         Dispatcher instructions, today's date in India
+│   │   └── types.ts                AgentStep / AgentResult DTOs
+│   ├── batchAssign.ts              Batch assign service (endpoint + agent tool)
+│   ├── supabase.ts                 Server-only Supabase client (secret key)
+│   ├── auth.ts                     Session cookie signing and validation
+│   ├── dates.ts                    India date helpers (YYYY-MM-DD)
+│   ├── env.ts                      Required-environment reader
+│   ├── schemas.ts                  Shared Zod schemas (ISO date)
+│   └── types.ts                    DTOs shared by the API routes and the screens
+├── seed/
+│   └── ps7_delivery_dispatch.sql   Tables, seed data, DB functions, RLS
+├── docs/
+│   ├── REPORT.md                   This report
+│   ├── report.html                 Printable version of this report
+│   ├── RouteWise-Project-Report.pdf  PDF build of this report
+│   └── screenshots/                Desktop and code captures used here
+├── proxy.ts                        Passcode gate for pages and APIs
+├── next.config.ts                  Turbopack root and worker count
+├── .env.example                    Environment template (all five keys)
+├── README.md                       Short project readme
+└── AGENTS.md                       Conventions for humans and AI tools</code></pre>
+<hr class="rule" />
+<h2>6. API Routes / Core Logic</h2>
+<h3>6.1 Endpoints</h3>
+<table><thead><tr><th>Method &amp; route</th><th>Request</th><th>Response</th><th>Notes</th></tr></thead><tbody><tr><td><code>POST /api/agent</code></td><td><code>{ messages: [{ role, text }] }</code></td><td><code>{ reply, steps[] }</code></td><td>Runs Gemini with seven tool declarations; <code>steps</code> carries each tool call, arguments, result and whether it wrote</td></tr><tr><td><code>GET /api/board</code></td><td>—</td><td><code>{ today, counts, deliveries[], riders[] }</code></td><td>Feeds the board and the fleet panel</td></tr><tr><td><code>GET /api/rider</code></td><td>—</td><td><code>{ today, riders[] }</code></td><td>Per-rider open stops, COD collected, COD pending, delivered count</td></tr><tr><td><code>POST /api/rider</code></td><td><code>{ delivery_id, rider_id, outcome, reason? }</code></td><td><code>{ delivery, attempts_left }</code></td><td>403 if the stop is not the rider's, 409 if the status is wrong or 3 attempts are used</td></tr><tr><td><code>GET /api/dashboard</code></td><td>—</td><td><code>{ today, totals, zones[], riders[], trend[], reasons[] }</code></td><td>Supervisor KPIs and the seven-day trend</td></tr><tr><td><code>POST /api/batch-assign</code></td><td><code>{ zone?, time_window?, delivery_date?, dry_run? }</code></td><td><code>{ assigned[], unassigned[], summary }</code></td><td>Assigns through <code>assign_delivery()</code>; <code>dry_run</code> previews</td></tr><tr><td><code>POST /api/login</code></td><td><code>{ passcode }</code></td><td><code>{ ok: true }</code> + session cookie</td><td>Constant-time passcode comparison</td></tr><tr><td><code>POST /api/logout</code></td><td>—</td><td><code>{ ok: true }</code></td><td>Clears the session cookie</td></tr><tr><td><code>GET /api/health</code></td><td>—</td><td>settings and table checks</td><td>Used during setup</td></tr></tbody></table>
+<h3>6.2 The seven agent tools</h3>
+<table><thead><tr><th>Tool</th><th>Purpose</th><th>Writes</th></tr></thead><tbody><tr><td><code>getPendingDeliveries</code></td><td>Pending deliveries for a date, optional zone and time window</td><td>no</td></tr><tr><td><code>getAvailableRiders</code></td><td>Active riders on shift: zone, hours, load, free capacity, window coverage</td><td>no</td></tr><tr><td><code>getRiderLoad</code></td><td>Every rider's load, capacity, shift and deliveries completed today</td><td>no</td></tr><tr><td><code>getFailedDeliveries</code></td><td>Failed deliveries with attempts used and whether a retry is allowed</td><td>no</td></tr><tr><td><code>assignDelivery</code></td><td>One delivery to one rider via <code>assign_delivery()</code></td><td>yes</td></tr><tr><td><code>batchAssignDeliveries</code></td><td>Every matching pending delivery in one call, via <code>assign_delivery()</code></td><td>yes</td></tr><tr><td><code>rescheduleDelivery</code></td><td>Move a failed delivery to a new date and window via <code>reschedule_delivery()</code></td><td>yes</td></tr></tbody></table>
+<p>Every argument is validated with Zod before the tool runs. Tool results are small objects; failures are raised as plain-English errors, which the model reads and explains to the dispatcher.</p>
+<h3>6.3 Agent loop</h3>
+<p><code>lib/agent/runAgent.ts</code> sends the conversation plus the function declarations to Gemini and executes the returned tool calls, feeding results back, for at most <strong>8 rounds</strong>. Transient <code>503</code>/<code>429</code> responses are retried. Every executed call is appended to <code>steps</code>, which the chat renders as expandable cards — so the dispatcher, and the judges, can see exactly what happened.</p>
+<h3>6.4 Batch assign</h3>
+<p><code>lib/batchAssign.ts</code> is shared by <code>POST /api/batch-assign</code> and the <code>batchAssignDeliveries</code> tool:</p>
+<ol><li>Resolve the zone (id or name) and the date (default: today in India).</li><li>Load every pending delivery for that date matching the zone and time window.</li><li>Load active riders with a shift that day, plus each rider's current active load.</li><li>For each delivery, pick the rider in the same zone with the <strong>most free capacity</strong> (ties broken by rider id).</li><li>Call <code>assign_delivery()</code> — capacity, zone, shift, status and attempt rules are re-checked by Postgres.</li><li>Return <code>{ assigned, unassigned, summary }</code>; <code>dry_run: true</code> produces the same plan without writing.</li></ol>
+<figure><img src="screenshots/code-1-batch-assign.png" alt="Batch assign service" /><figcaption>Batch assign service</figcaption></figure>
+<h3>6.5 Rider marking guards</h3>
+<p><code>POST /api/rider</code> refuses to mark a stop that is not assigned to the calling rider (403), that is no longer active (409), or that already has three attempts (409). The update is guarded on <code>rider_id</code> <strong>and</strong> the current status, so two taps cannot double-count, and each action writes a <code>delivery_attempts</code> row.</p>
+<figure><img src="screenshots/code-3-rider-guards.png" alt="Rider guards" /><figcaption>Rider guards</figcaption></figure>
+<h3>6.6 The database function the agent relies on</h3>
+<figure><img src="screenshots/code-4-sql-function.png" alt="assign_delivery in SQL" /><figcaption>assign_delivery in SQL</figcaption></figure>
+<h3>6.7 The batch tool declaration</h3>
+<figure><img src="screenshots/code-2-agent-tool.png" alt="batchAssignDeliveries tool" /><figcaption>batchAssignDeliveries tool</figcaption></figure>
+<hr class="rule" />
+<h2>Appendix A — Verification performed</h2>
+<table><thead><tr><th>Check</th><th>Result</th></tr></thead><tbody><tr><td><code>npm run typecheck</code></td><td>passes</td></tr><tr><td><code>npm run build</code></td><td>passes; routes include <code>/</code>, <code>/board</code>, <code>/dashboard</code>, <code>/riders</code>, <code>/rider</code>, <code>/login</code> and all eight APIs</td></tr><tr><td>Agent, assign prompt</td><td><code>getPendingDeliveries</code> → <code>getAvailableRiders</code> → <code>getRiderLoad</code> → <code>assignDelivery</code>; a second assign to the same full rider is refused with <em>"Rider Suresh Kumar is full (6 of 6)"</em></td></tr><tr><td>Agent, reschedule prompt</td><td>two failed deliveries moved; the one with 3 attempts refused by the database function</td></tr><tr><td>Batch assign (dry run)</td><td><code>would assign 1 of 2 pending … ORD-5007: no rider in Z1 has a shift with free capacity</code></td></tr><tr><td>Batch assign (real)</td><td><code>ORD-5006 → R01</code>, confirmed in the database, then restored to <code>pending</code></td></tr><tr><td>Unknown zone</td><td>HTTP 400 with the list of known zones</td></tr><tr><td>Rider view</td><td>delivered on a COD parcel raised COD collected to ₹899; failed incremented attempts; wrong-rider mark returned 403; data restored</td></tr><tr><td>Board and dashboard APIs</td><td>200 with live data (22 deliveries, 5 zones, 8 riders)</td></tr><tr><td>Light/dark themes</td><td><code>data-theme</code> switch verified in the browser and on the deployed site; body <code>#f4f7fb</code> in light, <code>#05080f</code> in dark</td></tr><tr><td>Production</td><td>login 200, <code>/dashboard</code> 200, <code>/api/dashboard</code> 200, <code>/api/board</code> 200, <code>/api/rider</code> 200</td></tr></tbody></table>
+<h2>Appendix B — Demo script for judges</h2>
+<ol><li><code>Assign all pending Velachery deliveries for this evening.</code> — the agent reads pending deliveries and the fleet, then batch-assigns; the board changes.</li><li><code>Which riders still have free capacity today?</code> — read-only fleet view.</li><li><code>Reschedule yesterday's failed deliveries to tomorrow morning.</code> — two move; the third is refused at 3 attempts.</li><li><strong>Dashboard</strong> → pick a zone → <strong>Preview</strong>, then <strong>Assign now</strong>; the KPIs and zone bars update.</li><li><strong>Rider view</strong> → R01 → <strong>Delivered</strong>: the board and COD totals update; <strong>Failed</strong> counts an attempt.</li><li>Toggle the theme in the header.</li></ol>
+<h2>Appendix C — Roadmap</h2>
+<ul><li>Move the rider mark into a <code>mark_delivery()</code> Postgres function so every write path is a database function.</li><li>Replace 5-second polling with Supabase Realtime subscriptions.</li><li>Route optimisation and ETA per rider using zone pincodes.</li><li>Proof-of-delivery photos stored in Supabase Storage.</li><li>Customer notifications (WhatsApp/SMS) when a parcel goes out for delivery.</li><li>Separate dispatcher and rider logins with roles instead of one shared passcode.</li></ul>
+<h2>Appendix D — Troubleshooting</h2>
+<table><thead><tr><th>Symptom</th><th>Fix</th></tr></thead><tbody><tr><td><code>Model not found</code></td><td>Set <code>GEMINI_MODEL</code> to a model the key can use, then redeploy</td></tr><tr><td><code>relation "deliveries" does not exist</code></td><td>Run <code>seed/ps7_delivery_dispatch.sql</code> in the Supabase SQL editor</td></tr><tr><td><code>Invalid API key</code> from Supabase</td><td><code>SUPABASE_URL</code> and <code>SUPABASE_SECRET_KEY</code> must come from the same project; use the <code>service_role</code> key</td></tr><tr><td>Agent answers without calling a tool</td><td>Check the tool descriptions and <code>lib/agent/systemPrompt.ts</code></td></tr><tr><td>Build runs out of memory on a laptop</td><td><code>NODE_OPTIONS=--max-old-space-size=3072 npm run build</code></td></tr></tbody></table>
+</body>
+</html>

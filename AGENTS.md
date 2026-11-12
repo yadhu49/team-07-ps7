@@ -54,6 +54,10 @@ lib/supabase.ts              Server-only Supabase client (secret key)
 lib/types.ts                 DTOs shared by the API and the screens
 proxy.ts                     Passcode gate
 seed/ps7_delivery_dispatch.sql  Tables, seed data, DB functions
+docs/REPORT.md               Full project report (the submission document)
+docs/report.html             Printable version, built from REPORT.md
+docs/RouteWise-Project-Report.pdf  PDF build of the report
+docs/screenshots/            Desktop and code captures used in the report
 ```
 
 ## Conventions
