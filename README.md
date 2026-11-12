@@ -3,6 +3,7 @@
 **VisionX · Team 07 · Problem Statement 7 (PS7) · SRM Agentic AI Hackathon**
 
 > **Full project report:** [`docs/REPORT.md`](docs/REPORT.md) · printable [`docs/report.html`](docs/report.html) · [`docs/RouteWise-Project-Report.pdf`](docs/RouteWise-Project-Report.pdf) (19 pages, all screenshots).
+> **Pitch deck:** [`docs/RouteWise-Pitch-Deck.pptx`](docs/RouteWise-Pitch-Deck.pptx) — six slides with speaker notes; slide previews in [`docs/deck-preview`](docs/deck-preview).
 
 A dispatcher at a Chennai delivery hub assigns every parcel to a rider by hand from a spreadsheet.
 Riders get overloaded while others sit idle, riders are sent into areas they do not cover, and failed
